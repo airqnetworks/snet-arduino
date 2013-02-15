@@ -31,51 +31,35 @@
 #define __SNET_H
 
 #include <Arduino.h>
-
-#include <inttypes.h>
 #include <SoftwareSerial.h>
+	 
+#include "Message.h"
+#include "Device.h"
 	  
-#define SNET_SERIAL_BAUDRATE 19200
-#define SNET_MAX_MESSAGE_SIZE   30
-	  
-typedef struct {
-     char	 preamble[4];
-	 uint8_t rcvid[4];
-	 uint8_t type;
-	 uint8_t devid[4];
-	 uint8_t pkt;
-	 int8_t  RSSI;
-	 uint8_t LQI;
-	 uint8_t *data;
-} __data_message;
-
-
+#define SNET_SERIAL_BAUDRATE 		19200
+#define SNET_MAX_DATAMESSAGE_SIZE   30
+#define SNET_MAX_SETMESSAGE_SIZE    20	 
+#define SNET_DEV_ADDR_LEN		 	4
+	 
 class sNET  {
 public:
-	 sNET();
-	 sNET(uint8_t rxPin, uint8_t txPin);
+	 sNET(uint8_t numDevices);
+	 sNET(uint8_t numDevices, uint8_t rxPin, uint8_t txPin);
      ~sNET();
 
      void processMessages();
-			 
+	 AIRQBaseDevice *getDeviceForDeviceID(uint8_t octet1, uint8_t octet2, uint8_t octet3, uint8_t octet4);
+	 DataMessage *getMessageForDeviceID(uint8_t octet1, uint8_t octet2, uint8_t octet3, uint8_t octet4);
+	 void sendToDevice(uint8_t octet1, uint8_t octet2, uint8_t octet3, uint8_t octet4, uint8_t type, uint8_t *data, uint8_t len);
+	 			 
 private:
 	 SoftwareSerial serial;
+     uint8_t numDevices;
+	 uint8_t allocatedDevices;
+	 AIRQBaseDevice **devices;
 	 
 	 void init(uint8_t rxPin, uint8_t txPin);
 	 uint8_t readSNETMessage(SoftwareSerial *serial, __data_message *msg);
-};
-
-class DataMessage {
-	friend class sNET;
-	
-private:
-	__data_message rawmessage;
-
-protected:
-	DataMessage(__data_message &rawmessage);
-	
-public:
-	int getDeviceID();
-};
+ };
 
 #endif //__SNET_H
