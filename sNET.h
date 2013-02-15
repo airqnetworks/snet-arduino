@@ -49,21 +49,6 @@ typedef struct {
 	 uint8_t *data;
 } __data_message;
 
-class AIRQBaseBoard {
-private:
-    static AIRQBaseBoard* instance_ptr;
-    AIRQBaseBoard() { };
-
-public:
-    ~AIRQBaseBoard() {};
-    static AIRQBaseBoard* get_instance() {
-            if (instance_ptr == NULL) {
-                    instance_ptr = new AIRQBaseBoard;
-            }
-            return instance_ptr;
-    }
-    bool method() { return true; };
-};
 
 class sNET  {
 public:
@@ -85,6 +70,7 @@ class DataMessage {
 	
 private:
 	__data_message rawmessage;
+
 protected:
 	DataMessage(__data_message &rawmessage);
 	
