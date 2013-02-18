@@ -11,6 +11,7 @@ typedef struct {
 	 uint8_t devid[4];
 	 uint8_t subtype;
 	 uint8_t pkt;
+	 uint8_t fwd;	 
 	 int8_t  RSSI;
 	 uint8_t LQI;
 	 uint8_t data[10];
@@ -33,6 +34,7 @@ protected:
 	
 public:
 	uint8_t *getDeviceID();
+	uint8_t getForward() {return rawmessage.fwd;};
 	uint8_t *getReceiverID();
 	uint8_t getPacketNumber();
 	int8_t getRSSI();
