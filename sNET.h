@@ -30,6 +30,8 @@
 #ifndef __SNET_H
 #define __SNET_H
 
+	 //#define SNET_ENABLE_CONFIRM
+
 #include <Arduino.h>
 #include <SoftwareSerial.h>
 	 
@@ -41,6 +43,7 @@
 #define SNET_MAX_SETMESSAGE_SIZE    20	 
 #define SNET_DEV_ADDR_LEN		 	4
 	 
+ 
 class sNET  {
 public:
 	 sNET(uint8_t numDevices);
@@ -50,6 +53,7 @@ public:
      void processMessages();
 	 AIRQBaseDevice *getDeviceForDeviceID(uint8_t octet1, uint8_t octet2, uint8_t octet3, uint8_t octet4);
 	 DataMessage *getMessageForDeviceID(uint8_t octet1, uint8_t octet2, uint8_t octet3, uint8_t octet4);
+	 void sendBroadcast(uint8_t *data, uint8_t len);
 	 void sendToDevice(uint8_t octet1, uint8_t octet2, uint8_t octet3, uint8_t octet4, uint8_t type, uint8_t *data, uint8_t len);
 	 			 
 private:

@@ -88,6 +88,9 @@ uint8_t sNET::readSNETMessage(SoftwareSerial *serial, __data_message *message)
 			if(i > 19 && memcmp(buf, "AIRQ", 4) == 0) { /* Minimun sNET message is 19 byte long */
 				/* Ok, it's a valid sNET message */
 				memcpy(message, buf, i-2); /* Let's copy buf to message: EOL sequence isn't copied */
+				Serial.print("DATAL LEN: ");
+				message->datalen = i-19;
+				Serial.println(message->datalen);
 				memset(buf, 0, sizeof(__data_message));	
 				return i-1;
 			} 
@@ -105,11 +108,9 @@ void sNET::init(uint8_t rxPin, uint8_t txPin) {
 	
 	devices = new AIRQBaseDevice*[numDevices];
 	
-	
-	// for(uint8_t i = 0; i < numDevices; i++) {
-	// 	devices[i] = new AIRQBaseDevice(new DataMessage(nullmsg));
-	// }
 	serial.begin(SNET_SERIAL_BAUDRATE);	
+	serial.write("$\n");
+	serial.flush();
 }
 
 void sNET::processMessages() {
@@ -124,24 +125,45 @@ void sNET::processMessages() {
 					found = true;
 				}
 			}
-			if(not found) {
+			if(not found and allocatedDevices < numDevices) {
 				uint8_t nullid[] = {0,0,0,0};
-				Serial.println("NUOVO");
 				switch(message.devid[0]) {
 				case 3:
-					devices[allocatedDevices++] = new AIRQ300(new AIRQ300DataMessage(message));
+					devices[allocatedDevices] = new AIRQ300(new AIRQ300DataMessage(message));
+					devices[allocatedDevices++]->setSNETReference(this);
 					return;
+				case 4:
+					devices[allocatedDevices] = new AIRQ310(new AIRQ310DataMessage(message));
+					devices[allocatedDevices++]->setSNETReference(this);					
+					return;
+				case 191:
+					devices[allocatedDevices] = new AIRQBaseDevice(new DataMessage(message));
+					devices[allocatedDevices++]->setSNETReference(this);					
+					return;
+					
 				}
 			}
 		}
 }
 
-void sNET::sendToDevice(uint8_t octet1, uint8_t octet2, uint8_t octet3, uint8_t octet4, uint8_t type, uint8_t *data, uint8_t len) {
-	uint8_t message[SNET_MAX_SETMESSAGE_SIZE] = {'A', 'T', 'S', type, octet1, octet2, octet3, octet4};
+void sNET::sendBroadcast(uint8_t *data, uint8_t len) {
+	uint8_t message[SNET_MAX_SETMESSAGE_SIZE] = {'A', 'T', 'S', 0xF};
 	
-	memcpy(message+8, data, len);
-	memcpy(message+8+len, "$\n", 2);
+	memcpy(message+4, data, len);
+	memcpy(message+4+len, "$\n", 2);
 	serial.flush();
-	serial.write(message, 10+len);
+	serial.write(message, 6+len);
 	serial.flush();
+	delay(100);	
+}
+
+void sNET::sendToDevice(uint8_t octet1, uint8_t octet2, uint8_t octet3, uint8_t octet4, uint8_t type, uint8_t *data, uint8_t len) {
+	uint8_t message[SNET_MAX_SETMESSAGE_SIZE] = {'A', 'T', 'S', type, 0x1, octet1, octet2, octet3, octet4};
+	
+	memcpy(message+9, data, len);
+	memcpy(message+9+len, "$\n", 2);
+	serial.flush();
+	serial.write(message, 11+len);
+	serial.flush();
+	delay(10);
 }
