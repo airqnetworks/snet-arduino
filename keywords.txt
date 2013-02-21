@@ -6,24 +6,19 @@
 # Datatypes (KEYWORD1)
 #######################################
 
-sNET	KEYWORD1
+sNET		KEYWORD1
+AIRQ310		KEYWORD1
+AIRQ300 	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
-begin	KEYWORD2
-exists	KEYWORD2
-mkdir	KEYWORD2
-remove	KEYWORD2
-rmdir	KEYWORD2
-open	KEYWORD2
-close	KEYWORD2
-seek	KEYWORD2
-position	KEYWORD2
-size	KEYWORD2	
+getDeviceForDeviceID	KEYWORD2
+getMessageForDeviceID	KEYWORD2
+processMessages			KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
 #######################################
-FILE_READ	LITERAL1
-FILE_WRITE	LITERAL1
+ON		LITERAL1
+OFF		LITERAL1

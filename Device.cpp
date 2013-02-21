@@ -1,3 +1,29 @@
+/**
+ * Software License Agreement
+ *
+ * (C)Copyright 2013, AirQ Networks s.r.l. (http://www.airqnetworks.com)
+ * All rights reserved.
+ *
+ * AirQ Networks licenses to you the right to use, modify, copy, and
+ * distribute this software/library when used in conjuction with an 
+ * AirQ Networks trasceiver to interface AirQ Networks wireless devices
+ * (transceivers, sensors, control boards and other devices produced 
+ * by AirQ Networks). Other uses, either express or implied, are prohibited.
+ *
+ * THE SOFTWARE AND DOCUMENTATION ARE PROVIDED "AS IS" WITHOUT
+ * WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT
+ * LIMITATION, ANY WARRANTY OF MERCHANTABILITY, FITNESS FOR A
+ * PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO EVENT SHALL
+ * AIRQ NETWORKS BE LIABLE FOR ANY INCIDENTAL, SPECIAL, INDIRECT OR
+ * CONSEQUENTIAL DAMAGES, LOST PROFITS OR LOST DATA, COST OF
+ * PROCUREMENT OF SUBSTITUTE GOODS, TECHNOLOGY OR SERVICES, ANY CLAIMS
+ * BY THIRD PARTIES (INCLUDING BUT NOT LIMITED TO ANY DEFENSE
+ * THEREOF), ANY CLAIMS FOR INDEMNITY OR CONTRIBUTION, OR OTHER
+ * SIMILAR COSTS, WHETHER ASSERTED ON THE BASIS OF CONTRACT, TORT
+ * (INCLUDING NEGLIGENCE), BREACH OF WARRANTY, OR OTHERWISE.
+ *
+ */
+	 
 #include "sNET.h"
 #include "Device.h"
 
@@ -39,7 +65,7 @@ AIRQControlBoard::AIRQControlBoard(DataMessage *message) :
 void AIRQControlBoard::sendSetMessage(uint8_t *data, uint8_t len) {
 	uint8_t *addr = getDeviceID();
 	snet->sendToDevice(addr[0], addr[1], addr[2], addr[3], 0x2, data, len);
-	delay(1000);
+	delay(50);
 }
 
 #ifdef SNET_ENABLE_CONFIRM
@@ -47,16 +73,19 @@ void AIRQControlBoard::sendSetMessage(uint8_t *data, uint8_t len) {
 void AIRQControlBoard::setIO(uint8_t *data, uint8_t len, bool check, uint8_t timeout) {
 	sendSetMessage(data, len);
 	delay(250);
-	
+
 	if(check) {
 		uint8_t times = 0;
 		snet->processMessages();
 		uint8_t *cdata = status->getData();
 		while(memcmp(data, cdata, len) != 0) {
-			sendSetMessage(data, 1);
+			if(status->updated()) {
+				sendSetMessage(data, 1);
+				times++;
+			}
 			snet->processMessages();
 			cdata = status->getData();
-			if(timeout >= 0 and (++times >= timeout))
+			if(timeout >= 0 and (times >= timeout))
 				return;
 		}
 	}
@@ -214,4 +243,3 @@ void AIRQ310::setRELAY6(IO_STATUS rstatus, bool check, uint8_t timeout) {
 	setIO(&data, 1);
 #endif //SNET_ENABLE_CONFIRM
 }
-

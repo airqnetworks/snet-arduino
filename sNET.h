@@ -7,7 +7,8 @@
  * AirQ Networks licenses to you the right to use, modify, copy, and
  * distribute this software/library when used in conjuction with an 
  * AirQ Networks trasceiver to interface AirQ Networks wireless devices
- * (sensors, control boards and other devices produced by AirQ Networks).
+ * (transceivers, sensors, control boards and other devices produced 
+ * by AirQ Networks). Other uses, either express or implied, are prohibited.
  *
  * THE SOFTWARE AND DOCUMENTATION ARE PROVIDED "AS IS" WITHOUT
  * WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT
@@ -21,16 +22,12 @@
  * SIMILAR COSTS, WHETHER ASSERTED ON THE BASIS OF CONTRACT, TORT
  * (INCLUDING NEGLIGENCE), BREACH OF WARRANTY, OR OTHERWISE.
  *
- *
- * Author               Date    Comment
- *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- * Carmine Noviello    15/02/13  Original
  */
-
+	 
 #ifndef __SNET_H
 #define __SNET_H
 
-	 //#define SNET_ENABLE_CONFIRM
+#define SNET_ENABLE_CONFIRM
 
 #include <Arduino.h>
 #include <SoftwareSerial.h>
@@ -42,14 +39,17 @@
 #define SNET_MAX_DATAMESSAGE_SIZE   30
 #define SNET_MAX_SETMESSAGE_SIZE    30	 
 #define SNET_DEV_ADDR_LEN		 	4
+#define SNET_DEFAULT_RX_PIN			10	 
+#define SNET_DEFAULT_TX_PIN			11
 	 
+#define SNET_LIBRARY_VERSION		0.1
  
 class sNET  {
 public:
-	 sNET(uint8_t numDevices);
-	 sNET(uint8_t numDevices, uint8_t rxPin, uint8_t txPin);
+	 sNET(uint8_t numDevices, uint8_t rxPin=SNET_DEFAULT_RX_PIN, uint8_t txPin=SNET_DEFAULT_TX_PIN);
      ~sNET();
 
+	 void begin();
      void processMessages();
 	 AIRQBaseDevice *getDeviceForDeviceID(uint8_t octet1, uint8_t octet2, uint8_t octet3, uint8_t octet4);
 	 DataMessage *getMessageForDeviceID(uint8_t octet1, uint8_t octet2, uint8_t octet3, uint8_t octet4);
@@ -58,11 +58,10 @@ public:
 	 			 
 private:
 	 SoftwareSerial serial;
-     uint8_t numDevices;
 	 uint8_t allocatedDevices;
+     uint8_t numDevices;
 	 AIRQBaseDevice **devices;
 	 
-	 void init(uint8_t rxPin, uint8_t txPin);
 	 uint8_t readSNETMessage(SoftwareSerial *serial, __data_message *msg);
  };
 

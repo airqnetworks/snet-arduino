@@ -7,7 +7,8 @@
  * AirQ Networks licenses to you the right to use, modify, copy, and
  * distribute this software/library when used in conjuction with an 
  * AirQ Networks trasceiver to interface AirQ Networks wireless devices
- * (sensors, control boards and other devices produced by AirQ Networks).
+ * (transceivers, sensors, control boards and other devices produced 
+ * by AirQ Networks). Other uses, either express or implied, are prohibited.
  *
  * THE SOFTWARE AND DOCUMENTATION ARE PROVIDED "AS IS" WITHOUT
  * WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT
@@ -21,27 +22,19 @@
  * SIMILAR COSTS, WHETHER ASSERTED ON THE BASIS OF CONTRACT, TORT
  * (INCLUDING NEGLIGENCE), BREACH OF WARRANTY, OR OTHERWISE.
  *
- *
- * Author               Date    Comment
- *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- * Carmine Noviello    15/02/13  Original
  */
 	 
 #include <Arduino.h>
 #include "sNET.h"
 #include "Message.h"
 
-#define defaultRXPin 10
-#define defaultTXPin 11
+
 
 uint8_t buf[SNET_MAX_DATAMESSAGE_SIZE];
  
-sNET::sNET(uint8_t numDevices) : serial(defaultRXPin, defaultTXPin), numDevices(numDevices), allocatedDevices(0) {
-	init(defaultRXPin, defaultTXPin);
-}
-
 sNET::sNET(uint8_t numDevices, uint8_t rxPin, uint8_t txPin) : serial(rxPin, txPin), numDevices(numDevices) {
-	init(rxPin, txPin);
+ 	pinMode(rxPin, INPUT);
+ 	pinMode(txPin, OUTPUT);
 }
 
 sNET::~sNET() {
@@ -82,15 +75,14 @@ uint8_t sNET::readSNETMessage(SoftwareSerial *serial, __data_message *message)
 			/* Message is invalid, we flush serial */
 			memset(buf, 0, sizeof(__data_message));	
 			serial->flush(); 
+			Serial.println("YES");
 			return 0;
 		}
 		if(i > 0 && buf[i-1] == '\n' && buf[i-2] == '$') { /* EOL detected */
 			if(i > 19 && memcmp(buf, "AIRQ", 4) == 0) { /* Minimun sNET message is 19 byte long */
 				/* Ok, it's a valid sNET message */
 				memcpy(message, buf, i-2); /* Let's copy buf to message: EOL sequence isn't copied */
-				Serial.print("DATAL LEN: ");
 				message->datalen = i-20;
-				Serial.println(message->datalen);
 				memset(buf, 0, sizeof(__data_message));	
 				return i-1;
 			} 
@@ -99,10 +91,7 @@ uint8_t sNET::readSNETMessage(SoftwareSerial *serial, __data_message *message)
 	}
 }
 
-void sNET::init(uint8_t rxPin, uint8_t txPin) {
-	pinMode(rxPin, INPUT);
-	pinMode(txPin, OUTPUT);
-
+void sNET::begin() {
 	__data_message nullmsg;
 	memset(&nullmsg, 0, sizeof(__data_message));
 	
@@ -110,7 +99,7 @@ void sNET::init(uint8_t rxPin, uint8_t txPin) {
 	
 	serial.begin(SNET_SERIAL_BAUDRATE);	
 	serial.write("$\n");
-	serial.flush();
+	delay(100);
 }
 
 void sNET::processMessages() {
@@ -143,7 +132,8 @@ void sNET::processMessages() {
 					
 				}
 			}
-		}
+		} 
+		
 }
 
 void sNET::sendBroadcast(uint8_t *data, uint8_t len) {
@@ -157,7 +147,7 @@ void sNET::sendBroadcast(uint8_t *data, uint8_t len) {
 	serial.flush();
 	serial.write(message, 7+len);
 	serial.flush();
-	delay(10);	
+	delay(60);	
 }
 
 void sNET::sendToDevice(uint8_t octet1, uint8_t octet2, uint8_t octet3, uint8_t octet4, uint8_t type, uint8_t *data, uint8_t len) {
@@ -165,11 +155,11 @@ void sNET::sendToDevice(uint8_t octet1, uint8_t octet2, uint8_t octet3, uint8_t 
 
 	if(len > 10)
 		return;
-	
+
 	memcpy(message+9, data, len);
 	memcpy(message+9+len, "$\n", 2);
-	serial.flush();
+	//serial.flush();
 	serial.write(message, 11+len);
-	serial.flush();
-	delay(10);
+	//serial.flush();
+	delay(100);
 }
