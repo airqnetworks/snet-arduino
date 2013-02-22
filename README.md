@@ -9,16 +9,18 @@ Arduino communicates with the shield using SoftwareSerial library. This means th
 sNET library need to be installed before using it. First step is download the library from this repository. Next, open your Arduino sketchbook folder. If there is already a folder there called libraries, place the library folder in there. If not, create a folder called libraries in the sketchbook folder, and drop the library folder in there. Then re-start the Arduino programming environment, and you should see your new library in the Sketch > Import Library menu.
 To download the library from this repository you can use one of the following ways:
 * **Using git** (preferred way.). Download the library using git. This will allow you to keep updated with the main repository every time a new release is pushed. To download the library, simply run the command:
+
 ```bash
 $ git clone https://github.com/airqnetworks/snet-arduino.git sNET
 ```
+
 and then copy the sNET folder into library subfolder of your sketchbook folder.
 * **Downloading the zip**. Click on the following link to download the whole library as a single zip file: 
 https://github.com/airqnetworks/snet-arduino/archive/master.zip
 
 asdasd
 ##Requirements
-This library requires an AirQ ShielD Arduino Uno shield and it was tested under Arduino IDE 1.5.x.
+This library requires an AirQ ShielD. It was tested under Arduino IDE 1.5.x.
 
 
 #How it works
