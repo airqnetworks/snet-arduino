@@ -29,7 +29,7 @@ sNET library does a really simple task: it translates every message coming from 
 
 The following picture clearly shows how it works.
 
-<img width="50%" src="http://wiki.airqnetworks.com/images/5/50/Shield-messages.jpg" />
+<img width="50%" src="http://wiki.airqnetworks.com/images/9/95/Shield-messages2.jpg" />
 
 The picture shows this scenario: three AirQ 310 control boards are used; the AirQ ShielD on the Arduino Uno board collects messages coming from control boards. For each control board, the sNET library generates an AIRQ310 device object, and for each message the corresponding message is created.
 
