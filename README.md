@@ -27,7 +27,7 @@ This library requires an AirQ ShielD. It was tested under Arduino IDE 1.5.x.
 #How it works
 In order to understand how this library works, it's important to 
 
-<img src="http://wiki.airqnetworks.com/images/5/50/Shield-messages.jpg">
+<img width="50%" src="http://wiki.airqnetworks.com/images/5/50/Shield-messages.jpg" />
 
 #Usage
 The library was designed to minimize the use of both Arduino RAM and ROM memory. This is translated in just one requirement: developer must know how many AirQ Networks devices will be 
