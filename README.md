@@ -16,15 +16,18 @@ To download the library from this repository you can use one of the following wa
 
 	and then copy the sNET folder into library subfolder of your sketchbook folder.
 * **Downloading the zip**. Click on the following link to download the whole library as a single zip file: 
-https://github.com/airqnetworks/snet-arduino/archive/master.zip
 
-asdasd
+	https://github.com/airqnetworks/snet-arduino/archive/master.zip
+
+
 ##Requirements
 This library requires an AirQ ShielD. It was tested under Arduino IDE 1.5.x.
 
 
 #How it works
+In order to understand how this library works, it's important to 
 
+<img src="http://wiki.airqnetworks.com/images/5/50/Shield-messages.jpg">
 
 #Usage
 The library was designed to minimize the use of both Arduino RAM and ROM memory. This is translated in just one requirement: developer must know how many AirQ Networks devices will be 
