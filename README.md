@@ -51,8 +51,8 @@ Let's suppose we want to interface the three AirQ 310 control boards of the abov
 
 ```cpp
 #include <sNET.h>
-#include <SoftwareSerial.h> /* sNET lib uses SoftwareSerial library. Arduino IDE requires that we include the header file here */
-
+/* sNET lib uses SoftwareSerial library. Arduino IDE requires that we include the header file here */
+#include <SoftwareSerial.h> 
 sNET snet(3);
 ```
 
