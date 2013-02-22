@@ -72,7 +72,7 @@ void loop() {
   ...
 }
 ```
-Now, let's suppose that we want to turn on the RELAY1 of the second AirQ 310 board (the one with network address 3.0.1.2). sNET library allows to do this in a really simple way:
+Now, let's suppose that we want to turn on the RELAY1 of the second AirQ 310 board (the one with network address 4.0.1.2). sNET library allows to do this in a really simple way:
 ```cpp
 void loop() {
   AIRQ310 *board;
@@ -80,11 +80,11 @@ void loop() {
   snet.processMessages();
 
   /* We ask the sNET object to give us the reference the device object
-   * corresponding to 3.0.1.2 board. The method sNET::getDeviceForDeviceID()
+   * corresponding to 4.0.1.2 board. The method sNET::getDeviceForDeviceID()
    * will return a pointer to an AIR310 object if the object was already created, 
    * otherwise it returns 0 (NULL). The device object is created as soon as sNET library
    * captures a message coming from that device */   
-  if((board = (AIRQ310 *)snet.getDeviceForDeviceID(3,0,1,2)) != 0) {
+  if((board = (AIRQ310 *)snet.getDeviceForDeviceID(4,0,1,2)) != 0) {
      /* Ok, the AIRQ310 object was created and we can turn RELAY1 on */
      board->setRELAY1(ON);
      while(1); /* Job done. We can stop here */
