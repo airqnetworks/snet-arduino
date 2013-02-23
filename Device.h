@@ -27,7 +27,7 @@
 #ifndef __DEVICE_H
 #define __DEVICE_H
 
-#include <Arduino.h>
+#include <WProgram.h>
 #include "Message.h"
 
 class DataMessage;

@@ -27,7 +27,7 @@
 #ifndef __MESSAGE_H
 #define __MESSAGE_H
 
-#include <Arduino.h>
+#include <WProgram.h>
 
 
 typedef struct {
