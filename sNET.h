@@ -27,9 +27,9 @@
 #ifndef __SNET_H
 #define __SNET_H
 
-// #define SNET_ENABLE_CONFIRM
+#define SNET_ENABLE_CONFIRM
 
-#include <WProgram.h>
+#include <Arduino.h>
 #include <SoftwareSerial.h>
 	 
 #include "Message.h"

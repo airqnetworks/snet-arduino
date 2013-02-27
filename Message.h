@@ -27,8 +27,7 @@
 #ifndef __MESSAGE_H
 #define __MESSAGE_H
 
-#include <WProgram.h>
-
+#include <Arduino.h>
 
 typedef struct {
      char	 preamble[4];

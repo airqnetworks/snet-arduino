@@ -24,7 +24,7 @@
  *
  */
 
-#include "sNET.h"
+#include <Arduino.h>
 #include "Message.h"
 
 bool CHECK_MASK(uint8_t data, uint8_t mask) {

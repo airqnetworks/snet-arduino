@@ -24,7 +24,8 @@
  *
  */
 	 
-#include <WProgram.h>
+
+#include <Arduino.h>
 #include "sNET.h"
 #include "Message.h"
 
@@ -45,16 +46,11 @@ sNET::~sNET() {
 AIRQBaseDevice *sNET::getDeviceForDeviceID(uint8_t octet1, uint8_t octet2, uint8_t octet3, uint8_t octet4)
 {
 	uint8_t addr[] = {octet1, octet2, octet3, octet4};
-	Serial.println("getDevice");
-	for(uint8_t i = 0; i < allocatedDevices; i++) {
-		Serial.println(devices[i]->getDeviceID()[0], HEX);
-		if(memcmp(devices[i]->getDeviceID(), addr, SNET_DEV_ADDR_LEN) == 0) {
-			Serial.println("TORNO");
-			return devices[i];
-		}
-	}
 
-	Serial.println("Done");
+	for(uint8_t i = 0; i < allocatedDevices; i++)
+		if(memcmp(devices[i]->getDeviceID(), addr, SNET_DEV_ADDR_LEN) == 0)
+			return devices[i];
+
 	return 0;	
 }
 
@@ -76,12 +72,10 @@ uint8_t sNET::readSNETMessage(SoftwareSerial *serial, __data_message *message)
 	
 	while(serial->available()) {
 		buf[i++] = serial->read();
-		Serial.println(buf[i--]);
 		if(i > SNET_MAX_DATAMESSAGE_SIZE) {
 			/* Message is invalid, we flush serial */
 			memset(buf, 0, sizeof(__data_message));	
 			serial->flush(); 
-			Serial.println("YES");
 			return 0;
 		}
 		if(i > 0 && buf[i-1] == '\n' && buf[i-2] == '$') { /* EOL detected */
@@ -105,7 +99,7 @@ void sNET::begin() {
 	
 	serial.begin(SNET_SERIAL_BAUDRATE);	
 	serial.write("$\n");
-	delay(100);
+	delay(1000);
 }
 
 void sNET::processMessages() {
@@ -164,8 +158,8 @@ void sNET::sendToDevice(uint8_t octet1, uint8_t octet2, uint8_t octet3, uint8_t 
 
 	memcpy(message+9, data, len);
 	memcpy(message+9+len, "$\n", 2);
-	//serial.flush();
+	serial.flush();
 	serial.write(message, 11+len);
-	//serial.flush();
+	serial.flush();
 	delay(100);
 }
