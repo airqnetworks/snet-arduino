@@ -102,6 +102,22 @@ void AIRQControlBoard::setIO(uint8_t *data, uint8_t len) {
 #endif
 
 
+void AIRQControlBoard::setRELAY(uint8_t rmask, IO_STATUS rstatus, bool check, uint8_t timeout) {
+	uint8_t data = status->getData()[0] & 0x3f;
+	
+	if(rstatus)
+		data |= rmask;
+	else
+		data &= 0xFF ^rmask;
+
+#ifdef SNET_ENABLE_CONFIRM	
+	setIO(&data, 1, check, timeout);
+#else
+	setIO(&data, 1);
+#endif //SNET_ENABLE_CONFIRM
+}
+
+
 bool AIRQControlBoard::statusChanged() {
 	bool changed = false;
 	if(lstatus != status->getData()[0]) {
@@ -117,33 +133,11 @@ AIRQ300::AIRQ300(DataMessage *message) :
 }
 
 void AIRQ300::setRELAY1(IO_STATUS rstatus, bool check, uint8_t timeout) {
-	uint8_t data = status->getData()[0];
-	
-	if(rstatus)
-		data |= 0x10;
-	else
-		data &= 0xFF ^0x10;
-
-#ifdef SNET_ENABLE_CONFIRM	
-	setIO(&data, 1, check, timeout);
-#else
-	setIO(&data, 1);
-#endif //SNET_ENABLE_CONFIRM
+	setRELAY(0x10, rstatus, check, timeout);
 }
 
 void AIRQ300::setRELAY2(IO_STATUS rstatus, bool check, uint8_t timeout) {
-	uint8_t data = status->getData()[0];
-	
-	if(rstatus)
-		data |= 0x20;
-	else
-		data &= 0xFF ^ 0x20;
-
-#ifdef SNET_ENABLE_CONFIRM	
-	setIO(&data, 1, check, timeout);
-#else
-	setIO(&data, 1);
-#endif //SNET_ENABLE_CONFIRM
+	setRELAY(0x20, rstatus, check, timeout);
 }
 
 
@@ -154,96 +148,29 @@ AIRQ310::AIRQ310(DataMessage *message) :
 
 
 void AIRQ310::setRELAY1(IO_STATUS rstatus, bool check, uint8_t timeout) {
-	uint8_t data = status->getData()[0] & 0x3F;
-
-	if(rstatus)
-		data |= 0x1;
-	else
-		data &= 0xFF ^0x1;
-
-#ifdef SNET_ENABLE_CONFIRM	
-	setIO(&data, 1, check, timeout);
-#else
-	setIO(&data, 1);
-#endif //SNET_ENABLE_CONFIRM
+	setRELAY(0x1, rstatus, check, timeout);
 }
 
 void AIRQ310::setRELAY2(IO_STATUS rstatus, bool check, uint8_t timeout) {
-	uint8_t data = status->getData()[0] & 0x3F;
-
-	if(rstatus)
-		data |= 0x2;
-	else
-		data &= 0xFF ^ 0x2;
-
-
-#ifdef SNET_ENABLE_CONFIRM	
-	setIO(&data, 1, check, timeout);
-#else
-	setIO(&data, 1);
-#endif //SNET_ENABLE_CONFIRM
+	setRELAY(0x2, rstatus, check, timeout);
 }
 
 
 void AIRQ310::setRELAY3(IO_STATUS rstatus, bool check, uint8_t timeout) {
-	uint8_t data = status->getData()[0] & 0x3F;
-	
-	if(rstatus)
-		data |= 0x4;
-	else
-		data &= 0xFF ^ 0x4;
-
-#ifdef SNET_ENABLE_CONFIRM	
-	setIO(&data, 1, check, timeout);
-#else
-	setIO(&data, 1);
-#endif //SNET_ENABLE_CONFIRM
+	setRELAY(0x4, rstatus, check, timeout);
 }
 
 
 void AIRQ310::setRELAY4(IO_STATUS rstatus, bool check, uint8_t timeout) {
-	uint8_t data = status->getData()[0] & 0x3F;
-	
-	if(rstatus)
-		data |= 0x8;
-	else
-		data &= 0xFF ^ 0x8;
-
-#ifdef SNET_ENABLE_CONFIRM	
-	setIO(&data, 1, check, timeout);
-#else
-	setIO(&data, 1);
-#endif //SNET_ENABLE_CONFIRM
+	setRELAY(0x8, rstatus, check, timeout);
 }
 
 
 void AIRQ310::setRELAY5(IO_STATUS rstatus, bool check, uint8_t timeout) {
-	uint8_t data = status->getData()[0] & 0x3F;
-	
-	if(rstatus)
-		data |= 0x10;
-	else
-		data &= 0xFF ^ 0x10;
-
-#ifdef SNET_ENABLE_CONFIRM	
-	setIO(&data, 1, check, timeout);
-#else
-	setIO(&data, 1);
-#endif //SNET_ENABLE_CONFIRM
+	setRELAY(0x10, rstatus, check, timeout);
 }
 
 
 void AIRQ310::setRELAY6(IO_STATUS rstatus, bool check, uint8_t timeout) {
-	uint8_t data = status->getData()[0] & 0x3F;
-	
-	if(rstatus)
-		data |= 0x20;
-	else
-		data &= 0xFF ^ 0x20;
-
-#ifdef SNET_ENABLE_CONFIRM	
-	setIO(&data, 1, check, timeout);
-#else
-	setIO(&data, 1);
-#endif //SNET_ENABLE_CONFIRM
+	setRELAY(0x20, rstatus, check, timeout);
 }

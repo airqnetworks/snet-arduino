@@ -71,6 +71,7 @@ protected:
 public:
 	virtual bool statusChanged();
 	void sendSetMessage(uint8_t *data, uint8_t len);
+	void setRELAY(uint8_t rmask, IO_STATUS rstatus, bool check, uint8_t timeout);
 	
 #ifdef SNET_ENABLE_CONFIRM
 	void setIO(uint8_t *data, uint8_t len, bool check=false, uint8_t timeout=-1);

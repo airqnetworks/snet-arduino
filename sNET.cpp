@@ -30,7 +30,6 @@
 #include "Message.h"
 
 
-
 uint8_t buf[SNET_MAX_DATAMESSAGE_SIZE];
  
 sNET::sNET(uint8_t numDevices, uint8_t rxPin, uint8_t txPin) : serial(rxPin, txPin), numDevices(numDevices) {
@@ -115,7 +114,6 @@ void sNET::processMessages() {
 				}
 			}
 			if(not found and allocatedDevices < numDevices) {
-				uint8_t nullid[] = {0,0,0,0};
 				switch(message.devid[0]) {
 				case 3:
 					devices[allocatedDevices] = new AIRQ300(new AIRQ300DataMessage(message));
