@@ -76,15 +76,18 @@ void AIRQControlBoard::setIO(uint8_t *data, uint8_t len, bool check, uint8_t tim
 
 	if(check) {
 		uint8_t times = 0;
-		snet->processMessages();
-		uint8_t *cdata = status->getData();
-		while(memcmp(data, cdata, len) != 0) {
-			if(status->updated()) {
-				sendSetMessage(data, 1);
-				times++;
-			}
+		uint8_t cdata;
+		while(1) {
 			snet->processMessages();
-			cdata = status->getData();
+			cdata = status->getData()[0] & 0x3F;
+			if(status->updated()){
+				if (memcmp(data, &cdata, len) != 0) {
+					sendSetMessage(data, len);
+					times++;
+				} else
+					return;
+			}
+
 			if(timeout >= 0 and (times >= timeout))
 				return;
 		}
@@ -151,8 +154,8 @@ AIRQ310::AIRQ310(DataMessage *message) :
 
 
 void AIRQ310::setRELAY1(IO_STATUS rstatus, bool check, uint8_t timeout) {
-	uint8_t data = status->getData()[0];
-	
+	uint8_t data = status->getData()[0] & 0x3F;
+
 	if(rstatus)
 		data |= 0x1;
 	else
@@ -166,12 +169,13 @@ void AIRQ310::setRELAY1(IO_STATUS rstatus, bool check, uint8_t timeout) {
 }
 
 void AIRQ310::setRELAY2(IO_STATUS rstatus, bool check, uint8_t timeout) {
-	uint8_t data = status->getData()[0];
-	
+	uint8_t data = status->getData()[0] & 0x3F;
+
 	if(rstatus)
 		data |= 0x2;
 	else
 		data &= 0xFF ^ 0x2;
+
 
 #ifdef SNET_ENABLE_CONFIRM	
 	setIO(&data, 1, check, timeout);
@@ -182,7 +186,7 @@ void AIRQ310::setRELAY2(IO_STATUS rstatus, bool check, uint8_t timeout) {
 
 
 void AIRQ310::setRELAY3(IO_STATUS rstatus, bool check, uint8_t timeout) {
-	uint8_t data = status->getData()[0];
+	uint8_t data = status->getData()[0] & 0x3F;
 	
 	if(rstatus)
 		data |= 0x4;
@@ -198,7 +202,7 @@ void AIRQ310::setRELAY3(IO_STATUS rstatus, bool check, uint8_t timeout) {
 
 
 void AIRQ310::setRELAY4(IO_STATUS rstatus, bool check, uint8_t timeout) {
-	uint8_t data = status->getData()[0];
+	uint8_t data = status->getData()[0] & 0x3F;
 	
 	if(rstatus)
 		data |= 0x8;
@@ -214,7 +218,7 @@ void AIRQ310::setRELAY4(IO_STATUS rstatus, bool check, uint8_t timeout) {
 
 
 void AIRQ310::setRELAY5(IO_STATUS rstatus, bool check, uint8_t timeout) {
-	uint8_t data = status->getData()[0];
+	uint8_t data = status->getData()[0] & 0x3F;
 	
 	if(rstatus)
 		data |= 0x10;
@@ -230,7 +234,7 @@ void AIRQ310::setRELAY5(IO_STATUS rstatus, bool check, uint8_t timeout) {
 
 
 void AIRQ310::setRELAY6(IO_STATUS rstatus, bool check, uint8_t timeout) {
-	uint8_t data = status->getData()[0];
+	uint8_t data = status->getData()[0] & 0x3F;
 	
 	if(rstatus)
 		data |= 0x20;
