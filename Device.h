@@ -81,6 +81,10 @@ public:
 };
 
 
+/*
+ * AirQ 300
+ *
+ */
 class AIRQ300 : public AIRQControlBoard {
 friend class sNET;
 	
@@ -101,7 +105,38 @@ public:
 	void setRELAY2(IO_STATUS status, bool check=false, uint8_t timeout=-1);
 
 };
-
+   
+/*
+ * AirQ 305
+ *
+ */
+class AIRQ305 : public AIRQControlBoard {
+friend class sNET;
+	
+protected:
+	AIRQ305(DataMessage *message);
+	~AIRQ305() { };
+	
+public: 
+	IO_STATUS getIN1() {return (IO_STATUS)((AIRQ305DataMessage*)status)->getIN1();};
+	IO_STATUS getIN2() {return (IO_STATUS)((AIRQ305DataMessage*)status)->getIN2();};
+	IO_STATUS getIN3() {return (IO_STATUS)((AIRQ305DataMessage*)status)->getIN3();};
+	IO_STATUS getIN4() {return (IO_STATUS)((AIRQ305DataMessage*)status)->getIN4();};
+	IO_STATUS getRELAY1() {return (IO_STATUS)((AIRQ305DataMessage*)status)->getRELAY1();};
+	IO_STATUS getRELAY2() {return (IO_STATUS)((AIRQ305DataMessage*)status)->getRELAY2();};
+	IO_STATUS getRELAY3() {return (IO_STATUS)((AIRQ305DataMessage*)status)->getRELAY3();};
+	IO_STATUS getRELAY4() {return (IO_STATUS)((AIRQ305DataMessage*)status)->getRELAY4();};
+	
+	void setRELAY1(IO_STATUS status, bool check=false, uint8_t timeout=-1);
+	void setRELAY2(IO_STATUS status, bool check=false, uint8_t timeout=-1);
+	void setRELAY3(IO_STATUS status, bool check=false, uint8_t timeout=-1);
+	void setRELAY4(IO_STATUS status, bool check=false, uint8_t timeout=-1);
+};
+   
+/*
+ * AirQ 310
+ *
+ */
 class AIRQ310 : public AIRQControlBoard {
 friend class sNET;
 

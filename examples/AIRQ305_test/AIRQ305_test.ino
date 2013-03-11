@@ -33,25 +33,40 @@
 /* The following line creates a sNET object. This object will be used
    interact with other device. The integer parameter say to the library
    how many end devices we'll interface */
-sNET snet(3);
+sNET snet(1);
+
+/* Objects instance of AIRQ305 class allow to interact with an AirQ 305 board. */
+AIRQ305 *board;
 
 void setup() {
+  /* Call the sNET::begin() method is required to inizialize the sNET library */
   snet.begin();
 }
 
 void loop() {
-  AIRQ310 *board;
-
+  /* sNET::processMessages() is responsibile to process messages coming from 
+     AirQ Networks devices and to update corresponding device object (in this
+     example, the AIRQ305 object). User code should call this method as soon
+     as possible and continuosly */
   snet.processMessages();
 
   /* We ask the sNET object to give us the reference the device object
-   * corresponding to 4.0.1.2 board. The method sNET::getDeviceForDeviceID()
+   * corresponding to 5.0.1.2 board. The method sNET::getDeviceForDeviceID()
    * will return a pointer to an AIR310 object if the object was already created, 
    * otherwise it returns 0 (NULL). The device object is created as soon as 
    * sNET library captures a message coming from that device */   
-  if((board = (AIRQ310 *)snet.getDeviceForDeviceID(4,0,1,2)) != 0) {
-     /* Ok, the AIRQ310 object was created and we can turn RELAY1 on */
-     board->setRELAY1(ON);
+  if((board = (AIRQ305 *)snet.getDeviceForDeviceID(5,0,0,0)) != 0) {
+     /* Ok, the AIRQ305 object was created and we can turn all relays on */
+     board->setRELAY1(ON, true);
+     board->setRELAY2(ON, true);
+     board->setRELAY3(ON, true);
+     board->setRELAY4(ON, true);
+     delay(1000);
+     /* Let's turn them off */     
+     board->setRELAY4(OFF, true);
+     board->setRELAY3(OFF, true);
+     board->setRELAY2(OFF, true);
+     board->setRELAY1(OFF, true);
      while(1); /* Job done. We stop here */
   }
 }

@@ -123,6 +123,10 @@ void sNET::processMessages() {
 					devices[allocatedDevices] = new AIRQ310(new AIRQ310DataMessage(message));
 					devices[allocatedDevices++]->setSNETReference(this);					
 					return;
+				case 5:
+					devices[allocatedDevices] = new AIRQ305(new AIRQ305DataMessage(message));
+					devices[allocatedDevices++]->setSNETReference(this);
+					return;
 				case 191:
 					devices[allocatedDevices] = new AIRQBaseDevice(new DataMessage(message));
 					devices[allocatedDevices++]->setSNETReference(this);					

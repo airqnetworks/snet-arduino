@@ -93,6 +93,14 @@ bool AIRQ300DataMessage::getIOStatus(uint8_t mask) {
 	return CHECK_MASK(getData()[0], mask);
 }
 
+AIRQ305DataMessage::AIRQ305DataMessage(__data_message &rawmessage) : DataMessage(rawmessage) {
+	
+}
+
+bool AIRQ305DataMessage::getIOStatus(uint8_t mask) {
+	return CHECK_MASK(getData()[0], mask);
+}
+
 AIRQ310DataMessage::AIRQ310DataMessage(__data_message &rawmessage) : DataMessage(rawmessage) {
 	
 }
@@ -100,3 +108,4 @@ AIRQ310DataMessage::AIRQ310DataMessage(__data_message &rawmessage) : DataMessage
 bool AIRQ310DataMessage::getIOStatus(uint8_t mask) {
 	return CHECK_MASK(getData()[0], mask);
 }
+

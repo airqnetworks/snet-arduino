@@ -127,20 +127,52 @@ bool AIRQControlBoard::statusChanged() {
 	return changed;
 }
 
+/*
+ * AirQ 300
+ *
+ */
 AIRQ300::AIRQ300(DataMessage *message) :
  AIRQControlBoard(message) {
 	 
 }
 
 void AIRQ300::setRELAY1(IO_STATUS rstatus, bool check, uint8_t timeout) {
-	setRELAY(0x10, rstatus, check, timeout);
+	setRELAY(AIRQ300_RELAY1_MASK, rstatus, check, timeout);
 }
 
 void AIRQ300::setRELAY2(IO_STATUS rstatus, bool check, uint8_t timeout) {
-	setRELAY(0x20, rstatus, check, timeout);
+	setRELAY(AIRQ300_RELAY2_MASK, rstatus, check, timeout);
 }
 
+/*
+ * AirQ 305
+ *
+ */
+AIRQ305::AIRQ305(DataMessage *message) :
+ AIRQControlBoard(message) {
+	 
+}
 
+void AIRQ305::setRELAY1(IO_STATUS rstatus, bool check, uint8_t timeout) {
+	setRELAY(AIRQ305_RELAY1_MASK, rstatus, check, timeout);
+}
+
+void AIRQ305::setRELAY2(IO_STATUS rstatus, bool check, uint8_t timeout) {
+	setRELAY(AIRQ305_RELAY2_MASK, rstatus, check, timeout);
+}
+
+void AIRQ305::setRELAY3(IO_STATUS rstatus, bool check, uint8_t timeout) {
+	setRELAY(AIRQ305_RELAY3_MASK, rstatus, check, timeout);
+}
+
+void AIRQ305::setRELAY4(IO_STATUS rstatus, bool check, uint8_t timeout) {
+	setRELAY(AIRQ305_RELAY4_MASK, rstatus, check, timeout);
+}
+
+/*
+ * AirQ 310
+ *
+ */
 AIRQ310::AIRQ310(DataMessage *message) :
  AIRQControlBoard(message) {
 	 
@@ -148,29 +180,29 @@ AIRQ310::AIRQ310(DataMessage *message) :
 
 
 void AIRQ310::setRELAY1(IO_STATUS rstatus, bool check, uint8_t timeout) {
-	setRELAY(0x1, rstatus, check, timeout);
+	setRELAY(AIRQ310_RELAY1_MASK, rstatus, check, timeout);
 }
 
 void AIRQ310::setRELAY2(IO_STATUS rstatus, bool check, uint8_t timeout) {
-	setRELAY(0x2, rstatus, check, timeout);
+	setRELAY(AIRQ310_RELAY2_MASK, rstatus, check, timeout);
 }
 
 
 void AIRQ310::setRELAY3(IO_STATUS rstatus, bool check, uint8_t timeout) {
-	setRELAY(0x4, rstatus, check, timeout);
+	setRELAY(AIRQ310_RELAY3_MASK, rstatus, check, timeout);
 }
 
 
 void AIRQ310::setRELAY4(IO_STATUS rstatus, bool check, uint8_t timeout) {
-	setRELAY(0x8, rstatus, check, timeout);
+	setRELAY(AIRQ310_RELAY4_MASK, rstatus, check, timeout);
 }
 
 
 void AIRQ310::setRELAY5(IO_STATUS rstatus, bool check, uint8_t timeout) {
-	setRELAY(0x10, rstatus, check, timeout);
+	setRELAY(AIRQ310_RELAY5_MASK, rstatus, check, timeout);
 }
 
 
 void AIRQ310::setRELAY6(IO_STATUS rstatus, bool check, uint8_t timeout) {
-	setRELAY(0x20, rstatus, check, timeout);
+	setRELAY(AIRQ310_RELAY6_MASK, rstatus, check, timeout);
 }

@@ -72,6 +72,10 @@ public:
 	
 };
 
+/*
+ * AirQ 300
+ *
+ */
 #define AIRQ300_IN1_MASK    0x1
 #define AIRQ300_IN2_MASK    0x2
 #define AIRQ300_IN3_MASK    0x4
@@ -99,6 +103,44 @@ public:
 	bool getRELAY2() {return getIOStatus(AIRQ300_RELAY2_MASK);};		
 };
 
+/*
+ * AirQ 305
+ *
+ */
+#define AIRQ305_RELAY1_MASK 0x1
+#define AIRQ305_RELAY2_MASK 0x2
+#define AIRQ305_RELAY3_MASK 0x4
+#define AIRQ305_RELAY4_MASK 0x8
+#define AIRQ305_IN1_MASK    0x10
+#define AIRQ305_IN2_MASK    0x20
+#define AIRQ305_IN3_MASK    0x40
+#define AIRQ305_IN4_MASK    0x80
+
+class AIRQ305DataMessage: public DataMessage {
+friend class sNET;
+
+protected:
+	AIRQ305DataMessage(__data_message &rawmessage);
+	~AIRQ305DataMessage() {};
+
+public:
+	uint8_t getDataLen() {return 1;};
+	bool getIOStatus(uint8_t mask);
+	bool getIN1() {return getIOStatus(AIRQ305_IN1_MASK);};
+	bool getIN2() {return getIOStatus(AIRQ305_IN2_MASK);};	
+	bool getIN3() {return getIOStatus(AIRQ305_IN3_MASK);};	
+	bool getIN4() {return getIOStatus(AIRQ305_IN4_MASK);};
+	bool getRELAY1() {return getIOStatus(AIRQ305_RELAY1_MASK);};
+	bool getRELAY2() {return getIOStatus(AIRQ305_RELAY2_MASK);};
+	bool getRELAY3() {return getIOStatus(AIRQ305_RELAY3_MASK);};
+	bool getRELAY4() {return getIOStatus(AIRQ305_RELAY4_MASK);};
+};
+
+
+/*
+ * AirQ 310
+ *
+ */
 #define AIRQ310_RELAY1_MASK 0x1
 #define AIRQ310_RELAY2_MASK 0x2
 #define AIRQ310_RELAY3_MASK 0x4
