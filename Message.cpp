@@ -5,8 +5,8 @@
  * All rights reserved.
  *
  * AirQ Networks licenses to you the right to use, modify, copy, and
- * distribute this software/library when used in conjuction with an 
- * AirQ Networks trasceiver to interface AirQ Networks wireless devices
+ * distribute this software/library when used in conjunction with an 
+ * AirQ Networks transceiver to interface AirQ Networks wireless devices
  * (transceivers, sensors, control boards and other devices produced 
  * by AirQ Networks). Other uses, either express or implied, are prohibited.
  *

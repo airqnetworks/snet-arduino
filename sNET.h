@@ -5,8 +5,8 @@
  * All rights reserved.
  *
  * AirQ Networks licenses to you the right to use, modify, copy, and
- * distribute this software/library when used in conjuction with an 
- * AirQ Networks trasceiver to interface AirQ Networks wireless devices
+ * distribute this software/library when used in conjunction with an 
+ * AirQ Networks transceiver to interface AirQ Networks wireless devices
  * (transceivers, sensors, control boards and other devices produced 
  * by AirQ Networks). Other uses, either express or implied, are prohibited.
  *
@@ -42,7 +42,7 @@
 #define SNET_DEFAULT_RX_PIN			10	 
 #define SNET_DEFAULT_TX_PIN			11
 	 
-#define SNET_LIBRARY_VERSION		0.2
+#define SNET_LIBRARY_VERSION		0.3
  
 class sNET  {
 public:
@@ -54,7 +54,7 @@ public:
 	 AIRQBaseDevice *getDeviceForDeviceID(uint8_t octet1, uint8_t octet2, uint8_t octet3, uint8_t octet4);
 	 DataMessage *getMessageForDeviceID(uint8_t octet1, uint8_t octet2, uint8_t octet3, uint8_t octet4);
 	 void sendBroadcast(uint8_t *data, uint8_t len);
-	 void sendToDevice(uint8_t octet1, uint8_t octet2, uint8_t octet3, uint8_t octet4, uint8_t type, uint8_t *data, uint8_t len);
+	 void sendToDevice(uint8_t octet1, uint8_t octet2, uint8_t octet3, uint8_t octet4, uint8_t type, uint8_t subtype, uint8_t *data, uint8_t len);
 	 			 
 private:
 	 SoftwareSerial serial;

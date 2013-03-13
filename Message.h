@@ -5,8 +5,8 @@
  * All rights reserved.
  *
  * AirQ Networks licenses to you the right to use, modify, copy, and
- * distribute this software/library when used in conjuction with an 
- * AirQ Networks trasceiver to interface AirQ Networks wireless devices
+ * distribute this software/library when used in conjunction with an 
+ * AirQ Networks transceiver to interface AirQ Networks wireless devices
  * (transceivers, sensors, control boards and other devices produced 
  * by AirQ Networks). Other uses, either express or implied, are prohibited.
  *
@@ -28,6 +28,9 @@
 #define __MESSAGE_H
 
 #include <Arduino.h>
+
+#define MSG_TYPE_CONFIRM 	0x40
+#define MSG_TYPE_CONFIRMED 	0x80	 
 
 typedef struct {
      char	 preamble[4];
@@ -111,6 +114,10 @@ public:
 #define AIRQ305_RELAY2_MASK 0x2
 #define AIRQ305_RELAY3_MASK 0x4
 #define AIRQ305_RELAY4_MASK 0x8
+#define AIRQ305_PULSE_RELAY1_MASK 0xC1
+#define AIRQ305_PULSE_RELAY2_MASK 0xC2
+#define AIRQ305_PULSE_RELAY3_MASK 0xC4
+#define AIRQ305_PULSE_RELAY4_MASK 0xC8
 #define AIRQ305_IN1_MASK    0x10
 #define AIRQ305_IN2_MASK    0x20
 #define AIRQ305_IN3_MASK    0x40
@@ -147,6 +154,13 @@ public:
 #define AIRQ310_RELAY4_MASK 0x8
 #define AIRQ310_RELAY5_MASK 0x10
 #define AIRQ310_RELAY6_MASK 0x20
+#define AIRQ310_PULSE_RELAY1_MASK 0xC1
+#define AIRQ310_PULSE_RELAY2_MASK 0xC2
+#define AIRQ310_PULSE_RELAY3_MASK 0xC4	 
+#define AIRQ310_PULSE_RELAY4_MASK 0xC8	 
+#define AIRQ310_PULSE_RELAY5_MASK 0xD0	 
+#define AIRQ310_PULSE_RELAY6_MASK 0xE0	 
+
 #define AIRQ310_POWER_MASK  0x40
 
 class AIRQ310DataMessage: public DataMessage {

@@ -36,7 +36,7 @@
 sNET snet(1);
 
 /* Objects instance of AIRQ305 class allow to interact with an AirQ 305 board. */
-AIRQ305 *board;
+AIRQ310 *board;
 
 void setup() {
   /* Call the sNET::begin() method is required to inizialize the sNET library */
@@ -51,18 +51,22 @@ void loop() {
   snet.processMessages();
 
   /* We ask the sNET object to give us the reference the device object
-   * corresponding to 5.0.1.0 board. The method sNET::getDeviceForDeviceID()
+   * corresponding to 4.0.1.0 board. The method sNET::getDeviceForDeviceID()
    * will return a pointer to an AIR305 object if the object was already created, 
    * otherwise it returns 0 (NULL). The device object is created as soon as 
    * sNET library captures a message coming from that device */   
-  if((board = (AIRQ305 *)snet.getDeviceForDeviceID(5,0,1,0)) != 0) {
+  if((board = (AIRQ310 *)snet.getDeviceForDeviceID(4,0,1,0)) != 0) {
      /* Ok, the AIRQ305 object was created and we can turn all relays on */
      board->setRELAY1(ON);
      board->setRELAY2(ON);
      board->setRELAY3(ON);
      board->setRELAY4(ON);
+     board->setRELAY5(ON);
+     board->setRELAY6(ON);
      delay(1000);
      /* Let's turn them off */     
+     board->setRELAY6(OFF);
+     board->setRELAY5(OFF);
      board->setRELAY4(OFF);
      board->setRELAY3(OFF);
      board->setRELAY2(OFF);
@@ -73,13 +77,8 @@ void loop() {
      board->pulseRELAY2();
      board->pulseRELAY3();
      board->pulseRELAY4();
-     delay(1000);
-     /* Finally, let's test timed ON */
-     board->setRELAY1(ON, true, 4);
-     board->setRELAY2(ON, true, 4);
-     board->setRELAY3(ON, true, 4);
-     board->setRELAY4(ON, true, 4);
-     
+     board->pulseRELAY5();
+     board->pulseRELAY6();
      while(1); /* Job done. We stop here */
   }
 }

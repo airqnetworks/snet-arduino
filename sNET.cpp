@@ -5,8 +5,8 @@
  * All rights reserved.
  *
  * AirQ Networks licenses to you the right to use, modify, copy, and
- * distribute this software/library when used in conjuction with an 
- * AirQ Networks trasceiver to interface AirQ Networks wireless devices
+ * distribute this software/library when used in conjunction with an 
+ * AirQ Networks transceiver to interface AirQ Networks wireless devices
  * (transceivers, sensors, control boards and other devices produced 
  * by AirQ Networks). Other uses, either express or implied, are prohibited.
  *
@@ -98,6 +98,7 @@ void sNET::begin() {
 	
 	serial.begin(SNET_SERIAL_BAUDRATE);	
 	serial.write("$\n");
+	randomSeed(analogRead(0));
 	delay(1000);
 }
 
@@ -152,8 +153,8 @@ void sNET::sendBroadcast(uint8_t *data, uint8_t len) {
 	delay(60);	
 }
 
-void sNET::sendToDevice(uint8_t octet1, uint8_t octet2, uint8_t octet3, uint8_t octet4, uint8_t type, uint8_t *data, uint8_t len) {
-	uint8_t message[SNET_MAX_SETMESSAGE_SIZE] = {'A', 'T', 'S', type, 0x1, octet1, octet2, octet3, octet4};
+void sNET::sendToDevice(uint8_t octet1, uint8_t octet2, uint8_t octet3, uint8_t octet4, uint8_t type, uint8_t subtype, uint8_t *data, uint8_t len) {
+	uint8_t message[SNET_MAX_SETMESSAGE_SIZE] = {'A', 'T', 'S', type, subtype, octet1, octet2, octet3, octet4};
 
 	if(len > 10)
 		return;

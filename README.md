@@ -36,7 +36,7 @@ The picture shows this scenario: three AirQ 310 control boards are used; the Air
 sNET library was designed to minimize usage of both Arduino SRAM and flash memory. This means that:
 
 + *There is no queuing mechanism of received messages in sNET*. Only the last received message is available for a given device. 
-+ Programmes have to specify the number of remote devices on the same sensor networks that will interact with the shield (and so with the library).
++ Programmers have to specify the number of remote devices on the same sensor networks that will interact with the shield (and so with the library).
  
 The <code>sNET</code> class does the dirty job. Instances of this class are responsible to:
 
@@ -104,8 +104,8 @@ More documentation and examples on how to use this library are available in AirQ
  * All rights reserved.
  *
  * AirQ Networks licenses to you the right to use, modify, copy, and
- * distribute this software/library when used in conjuction with an 
- * AirQ Networks trasceiver to interface AirQ Networks wireless devices
+ * distribute this software/library when used in conjunction with an 
+ * AirQ Networks transceiver to interface AirQ Networks wireless devices
  * (transceivers, sensors, control boards and other devices produced 
  * by AirQ Networks). Other uses, either express or implied, are prohibited.
  *
