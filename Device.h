@@ -63,6 +63,7 @@ friend class sNET;
 
 private:
 	uint8_t lstatus;
+	uint8_t lconftoken;
 
 protected:
 	uint8_t RELAY_XOR_MASK;

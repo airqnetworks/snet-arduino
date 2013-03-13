@@ -60,6 +60,7 @@ void AIRQBaseDevice::updateFromRawMessage(__data_message *message) {
 AIRQControlBoard::AIRQControlBoard(DataMessage *message) :
  AIRQBaseDevice(message) {
 	 lstatus = 0xFF; /* The first time statusChanged return always true */
+	 lconftoken = 0;
 	 RELAY_XOR_MASK = 0xFF;
 }
 
@@ -69,7 +70,6 @@ void AIRQControlBoard::sendSetMessage(uint8_t subtype, uint8_t *data, uint8_t le
 		snet->sendToDevice(addr[0], addr[1], addr[2], addr[3], 0x42, subtype, data, len);
 	else
 		snet->sendToDevice(addr[0], addr[1], addr[2], addr[3], 0x2, subtype, data, len);
-	delay(50);
 }
 
 #ifdef SNET_ENABLE_CONFIRM
@@ -81,21 +81,25 @@ void AIRQControlBoard::setIO(uint8_t subtype, uint8_t *data, uint8_t len, bool c
 		return;
 	}
 			
-	uint8_t conftoken = (uint8_t)random(1, 255);
 	uint8_t newdata[len+1];
+	uint8_t conftoken = (uint8_t)random(1, 255);
+
+	while(conftoken == lconftoken) /* Because random is a relative word :-) */
+		conftoken = (uint8_t)random(1, 255);
+	lconftoken = conftoken;
+	
 	memcpy(newdata, data, len);
 	newdata[len] = conftoken;
 		
 	sendSetMessage(subtype, newdata, len+1, true);
-	delay(250);
 
 	if(check) {
 		uint8_t times = 0;
 		uint8_t type;
 		while(1) {
 			snet->processMessages();
-			type = status->getType();
 			if(status->updated()){
+				type = status->getType();
 				if ((type & MSG_TYPE_CONFIRMED) == MSG_TYPE_CONFIRMED && status->getData()[0] == conftoken)
 					return;
 				else {
