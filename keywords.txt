@@ -6,19 +6,44 @@
 # Datatypes (KEYWORD1)
 #######################################
 
-sNET		KEYWORD1
-AIRQ310		KEYWORD1
-AIRQ300 	KEYWORD1
+sNET	KEYWORD1
+AIRQ300	KEYWORD1
+AIRQ305	KEYWORD1
+AIRQ310	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
 getDeviceForDeviceID	KEYWORD2
 getMessageForDeviceID	KEYWORD2
-processMessages			KEYWORD2
+processMessages	KEYWORD2
+sendBroadcast	KEYWORD2
+sendToDevice	KEYWORD2
+
+getRELAY1	KEYWORD2
+getRELAY2	KEYWORD2
+getRELAY3	KEYWORD2
+getRELAY4	KEYWORD2
+getRELAY5	KEYWORD2
+getRELAY6	KEYWORD2
+
+pulseRELAY1	KEYWORD2
+pulseRELAY2	KEYWORD2
+pulseRELAY3	KEYWORD2
+pulseRELAY4	KEYWORD2
+pulseRELAY5	KEYWORD2
+pulseRELAY6	KEYWORD2
+
+setRELAY1	KEYWORD2
+setRELAY2	KEYWORD2
+setRELAY3	KEYWORD2
+setRELAY4	KEYWORD2
+setRELAY5	KEYWORD2
+setRELAY6	KEYWORD2
+
 
 #######################################
 # Constants (LITERAL1)
 #######################################
-ON		LITERAL1
-OFF		LITERAL1
+ON	LITERAL1
+OFF	LITERAL1
