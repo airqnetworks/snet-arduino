@@ -140,7 +140,16 @@ void AIRQControlBoard::setRELAY(uint8_t rmask, IO_STATUS rstatus, bool check, ui
 		data |= rmask;
 	else
 		data &= 0xFF ^rmask;
-
+	
+#ifdef SNET_ENABLE_CONFIRM 
+    /* 
+       We check if really need to change relay status. This
+       check is reliable if and only if SNET_ENABLE_CONFIRM 
+       if defined 
+     */
+	if(data == (status->getData()[0] & rmask))
+		return;
+#endif
 
 #ifdef SNET_ENABLE_CONFIRM	
 	setIO(0x1, &data, 1, check, timeout);
