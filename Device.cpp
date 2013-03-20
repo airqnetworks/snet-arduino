@@ -97,8 +97,7 @@ void AIRQControlBoard::setIO(uint8_t subtype, uint8_t *data, uint8_t len, bool c
 		uint8_t type;
 		while(1) {
 			snet->processMessages();
-			Serial.println("CALL");
-			
+
 			if(status->updated()){
 				type = status->getType();
 				if ((type & MSG_TYPE_CONFIRMED) == MSG_TYPE_CONFIRMED && status->getData()[0] == conftoken) 
