@@ -50,7 +50,7 @@ void loop() {
      as possible and continuosly */
   snet.processMessages();
 
-  /* We ask the sNET object to give us the reference the device object
+  /* We ask the sNET object to give us the reference to the device object
    * corresponding to 5.0.1.0 board. The method sNET::getDeviceForDeviceID()
    * will return a pointer to an AIR305 object if the object was already created, 
    * otherwise it returns 0 (NULL). The device object is created as soon as 

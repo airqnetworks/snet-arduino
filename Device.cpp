@@ -80,7 +80,6 @@ void AIRQControlBoard::setIO(uint8_t subtype, uint8_t *data, uint8_t len, bool c
 		delay(250);
 		return;
 	}
-			
 	uint8_t newdata[len+1];
 	uint8_t conftoken = (uint8_t)random(1, 255);
 
@@ -98,9 +97,11 @@ void AIRQControlBoard::setIO(uint8_t subtype, uint8_t *data, uint8_t len, bool c
 		uint8_t type;
 		while(1) {
 			snet->processMessages();
+			Serial.println("CALL");
+			
 			if(status->updated()){
 				type = status->getType();
-				if ((type & MSG_TYPE_CONFIRMED) == MSG_TYPE_CONFIRMED && status->getData()[0] == conftoken)
+				if ((type & MSG_TYPE_CONFIRMED) == MSG_TYPE_CONFIRMED && status->getData()[0] == conftoken) 
 					return;
 				else {
 					sendSetMessage(subtype, newdata, len+1, true);
@@ -147,7 +148,7 @@ void AIRQControlBoard::setRELAY(uint8_t rmask, IO_STATUS rstatus, bool check, ui
        check is reliable if and only if SNET_ENABLE_CONFIRM 
        if defined 
      */
-	if(data == (status->getData()[0] & rmask))
+	if(data == (status->getData()[0] & RELAY_XOR_MASK))
 		return;
 #endif
 
@@ -156,6 +157,9 @@ void AIRQControlBoard::setRELAY(uint8_t rmask, IO_STATUS rstatus, bool check, ui
 #else
 	setIO(0x1, &data, 1, false, -1);
 #endif //SNET_ENABLE_CONFIRM
+	
+	while((status->getType() & MSG_TYPE_CONFIRMED) == MSG_TYPE_CONFIRMED)
+		snet->processMessages();
 }
 
 

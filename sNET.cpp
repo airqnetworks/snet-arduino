@@ -68,7 +68,6 @@ DataMessage *sNET::getMessageForDeviceID(uint8_t octet1, uint8_t octet2, uint8_t
 uint8_t sNET::readSNETMessage(SoftwareSerial *serial, __data_message *message)
 {
 	uint8_t i = 0;
-	
 	while(serial->available()) {
 		buf[i++] = serial->read();
 		if(i > SNET_MAX_DATAMESSAGE_SIZE) {
@@ -118,22 +117,21 @@ void sNET::processMessages() {
 				switch(message.devid[0]) {
 				case 3:
 					devices[allocatedDevices] = new AIRQ300(new AIRQ300DataMessage(message));
-					devices[allocatedDevices++]->setSNETReference(this);
-					return;
+					break;
 				case 4:
 					devices[allocatedDevices] = new AIRQ310(new AIRQ310DataMessage(message));
-					devices[allocatedDevices++]->setSNETReference(this);					
-					return;
+					break;
 				case 5:
 					devices[allocatedDevices] = new AIRQ305(new AIRQ305DataMessage(message));
-					devices[allocatedDevices++]->setSNETReference(this);
-					return;
+					break;
 				case 191:
 					devices[allocatedDevices] = new AIRQBaseDevice(new DataMessage(message));
-					devices[allocatedDevices++]->setSNETReference(this);					
-					return;
-					
+					break;
+				default: /* Unknown message */
+					return;					
 				}
+				devices[allocatedDevices]->setSNETReference(this);
+				devices[allocatedDevices++]->getLastMessage()->setSNETReference(this);
 			}
 		} 
 		

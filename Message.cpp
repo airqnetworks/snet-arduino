@@ -26,6 +26,7 @@
 
 #include <Arduino.h>
 #include "Message.h"
+#include "sNET.h"
 
 bool CHECK_MASK(uint8_t data, uint8_t mask) {
 	return (data & mask) == mask;
@@ -39,8 +40,7 @@ DataMessage::DataMessage() {
 	memset(&rawmessage, 0, sizeof(__data_message));
 }
 
-uint8_t *DataMessage::getData()
-{
+uint8_t *DataMessage::getData() {
 	return rawmessage.data;
 }
 
@@ -77,6 +77,10 @@ void DataMessage::updateFromRawMessage(__data_message *message) {
 	umessage = true;
 }
 
+void DataMessage::setData(uint8_t *data, uint8_t len) {
+	memcpy(rawmessage.data, data, len);
+}
+
 bool DataMessage::updated() {
 	if(umessage) {
 		umessage = false;
@@ -85,27 +89,9 @@ bool DataMessage::updated() {
 	return false;
 }
 
-AIRQ300DataMessage::AIRQ300DataMessage(__data_message &rawmessage) : DataMessage(rawmessage) {
-	
-}
+bool AIRQ3XXDataMessage::getIOStatus(uint8_t mask) {
+	while((getType() & MSG_TYPE_CONFIRMED) == MSG_TYPE_CONFIRMED)
+		snet->processMessages();
 
-bool AIRQ300DataMessage::getIOStatus(uint8_t mask) {
 	return CHECK_MASK(getData()[0], mask);
 }
-
-AIRQ305DataMessage::AIRQ305DataMessage(__data_message &rawmessage) : DataMessage(rawmessage) {
-	
-}
-
-bool AIRQ305DataMessage::getIOStatus(uint8_t mask) {
-	return CHECK_MASK(getData()[0], mask);
-}
-
-AIRQ310DataMessage::AIRQ310DataMessage(__data_message &rawmessage) : DataMessage(rawmessage) {
-	
-}
-
-bool AIRQ310DataMessage::getIOStatus(uint8_t mask) {
-	return CHECK_MASK(getData()[0], mask);
-}
-

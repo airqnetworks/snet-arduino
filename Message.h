@@ -31,6 +31,7 @@
 
 #define MSG_TYPE_CONFIRM 	0x40
 #define MSG_TYPE_CONFIRMED 	0x80	 
+#define MSG_MAX_DATA_LEN	0xA
 
 typedef struct {
      char	 preamble[4];
@@ -42,9 +43,11 @@ typedef struct {
 	 uint8_t fwd;	 
 	 int8_t  RSSI;
 	 uint8_t LQI;
-	 uint8_t data[10];
+	 uint8_t data[MSG_MAX_DATA_LEN];
 	 uint8_t datalen;
-} __data_message;
+ } __data_message;
+ 
+class sNET;
 
 class DataMessage {
 	friend class sNET;
@@ -55,9 +58,12 @@ private:
 	bool umessage;	
 
 protected:
+	sNET *snet;
+
 	DataMessage();
-	~DataMessage() {};
 	DataMessage(__data_message &rawmessage);
+	~DataMessage() {};
+	void setSNETReference(sNET *snetptr) {snet = snetptr;};
 	void updateFromRawMessage(__data_message *message);
 	
 public:
@@ -71,6 +77,7 @@ public:
 	uint8_t getType();
 	virtual uint8_t *getData();
 	virtual uint8_t getDataLen() {return rawmessage.datalen;};
+	void setData(uint8_t *data, uint8_t len);
 	bool updated();
 	
 };
@@ -87,16 +94,26 @@ public:
 #define AIRQ300_RELAY2_MASK 0x20
 #define AIRQ300_POWER_MASK  0x40
 
-class AIRQ300DataMessage: public DataMessage {
+class AIRQ3XXDataMessage : public DataMessage {
 friend class sNET;
 
 protected:
-	AIRQ300DataMessage(__data_message &rawmessage);
-	~AIRQ300DataMessage() {};
-
+	AIRQ3XXDataMessage(__data_message &rawmessage) : DataMessage(rawmessage) {};
+	~AIRQ3XXDataMessage();
+	
 public:
 	uint8_t getDataLen() {return 1;};
 	bool getIOStatus(uint8_t mask);
+};
+
+class AIRQ300DataMessage: public AIRQ3XXDataMessage {
+friend class sNET;
+
+protected:
+	AIRQ300DataMessage(__data_message &rawmessage) : AIRQ3XXDataMessage(rawmessage) {};
+	~AIRQ300DataMessage() {};
+
+public:
 	bool getIN1() {return getIOStatus(AIRQ300_IN1_MASK);};
 	bool getIN2() {return getIOStatus(AIRQ300_IN2_MASK);};	
 	bool getIN3() {return getIOStatus(AIRQ300_IN3_MASK);};	
@@ -123,17 +140,15 @@ public:
 #define AIRQ305_IN3_MASK    0x40
 #define AIRQ305_IN4_MASK    0x80
 
-class AIRQ305DataMessage: public DataMessage {
+class AIRQ305DataMessage: public AIRQ3XXDataMessage {
 friend class sNET;
 
 protected:
-	AIRQ305DataMessage(__data_message &rawmessage);
+	AIRQ305DataMessage(__data_message &rawmessage) : AIRQ3XXDataMessage(rawmessage) {};
 	~AIRQ305DataMessage() {};
 
 public:
-	uint8_t getDataLen() {return 1;};
-	bool getIOStatus(uint8_t mask);
-	bool getIN1() {return getIOStatus(AIRQ305_IN1_MASK);};
+	bool getIN1() {	return getIOStatus(AIRQ305_IN1_MASK);};
 	bool getIN2() {return getIOStatus(AIRQ305_IN2_MASK);};	
 	bool getIN3() {return getIOStatus(AIRQ305_IN3_MASK);};	
 	bool getIN4() {return getIOStatus(AIRQ305_IN4_MASK);};
@@ -163,17 +178,14 @@ public:
 
 #define AIRQ310_POWER_MASK  0x40
 
-class AIRQ310DataMessage: public DataMessage {
+class AIRQ310DataMessage: public AIRQ3XXDataMessage {
 friend class sNET;
 
 protected:
-	AIRQ310DataMessage(__data_message &rawmessage);
+	AIRQ310DataMessage(__data_message &rawmessage) : AIRQ3XXDataMessage(rawmessage) {};
 	~AIRQ310DataMessage() {};
 
 public:
-	
-	uint8_t getDataLen() {return 1;};
-	bool getIOStatus(uint8_t mask);
 	bool getPOWER() {return getIOStatus(AIRQ310_POWER_MASK);};
 	bool getRELAY1() {return getIOStatus(AIRQ310_RELAY1_MASK);};
 	bool getRELAY2() {return getIOStatus(AIRQ310_RELAY2_MASK);};
