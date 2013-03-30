@@ -124,6 +124,12 @@ void sNET::processMessages() {
 				case 5:
 					devices[allocatedDevices] = new AIRQ305(new AIRQ305DataMessage(message));
 					break;
+				case 100:
+					devices[allocatedDevices] = new AIRQ100(new AIRQ100DataMessage(message));
+					break;
+				case 101:
+					devices[allocatedDevices] = new AIRQ101(new AIRQ101DataMessage(message));
+					break;
 				case 191:
 					devices[allocatedDevices] = new AIRQBaseDevice(new DataMessage(message));
 					break;

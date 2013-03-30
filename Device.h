@@ -53,6 +53,35 @@ public:
 	virtual bool statusChanged() {return false;};
 };
 
+
+class AIRQ100: public AIRQBaseDevice {
+friend class sNET;
+
+protected:
+	AIRQ100(DataMessage *message) : AIRQBaseDevice(message) {};
+	~AIRQ100() {};
+
+public:
+	
+	uint8_t getTEMP() {return ((AIRQ100DataMessage*)status)->getTEMP();}
+	float getBATT() {return ((AIRQ100DataMessage*)status)->getBATT();}	
+};
+
+
+class AIRQ101: public AIRQBaseDevice {
+friend class sNET;
+
+protected:
+	AIRQ101(DataMessage *message) : AIRQBaseDevice(message) {};
+	~AIRQ101() {};
+
+public:
+	
+	float getTEMP() {return ((AIRQ101DataMessage*)status)->getTEMP();}
+	float getBATT() {return ((AIRQ101DataMessage*)status)->getBATT();}	
+};
+
+
 typedef enum {
 	ON = 1,
 	OFF = 0

@@ -89,9 +89,74 @@ bool DataMessage::updated() {
 	return false;
 }
 
+
+/*
+ * AirQ 100
+ *
+ */
+
+uint8_t AIRQ100DataMessage::getTEMP() {
+	uint8_t temp = 0;
+	
+	memcpy(&temp, getData(), sizeof(uint8_t));
+	return temp;
+}
+
+int AIRQ100DataMessage::getBATT() {
+	int battvoltage = 0;
+	
+	memcpy(&battvoltage, getData()+sizeof(uint8_t), 2);
+	return battvoltage;
+}
+
+
+/*
+ * AirQ 101
+ *
+ */
+
+float AIRQ101DataMessage::getTEMP() {
+	float temp = 0.0;
+	
+	memcpy(&temp, getData(), sizeof(float));
+	return temp;
+}
+
+int AIRQ101DataMessage::getBATT() {
+	int battvoltage = 0;
+	
+	memcpy(&battvoltage, getData()+sizeof(float), 2);
+	return battvoltage;
+}
+
+
+/*
+ * AirQ 3XX
+ *
+ */
+
 bool AIRQ3XXDataMessage::getIOStatus(uint8_t mask) {
 	while((getType() & MSG_TYPE_CONFIRMED) == MSG_TYPE_CONFIRMED)
 		snet->processMessages();
 
 	return CHECK_MASK(getData()[0], mask);
+}
+
+bool AIRQ3XXDataMessage::risingIOStatus(uint8_t mask) {
+	while((getType() & MSG_TYPE_CONFIRMED) == MSG_TYPE_CONFIRMED)
+		snet->processMessages();
+
+	bool inval = CHECK_MASK(getData()[0], mask);
+	
+	// return true for rising, else false
+	if(inval && !(risingStatus & mask)) {
+		risingStatus |= mask;	// set the rising
+		return true;
+	}
+	else if(!inval && (risingStatus & mask)) {
+		risingStatus &= ~mask;	// reset the rising
+		return false;		
+	}
+	else
+		return false;
 }

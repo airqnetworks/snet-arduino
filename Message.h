@@ -83,6 +83,42 @@ public:
 };
 
 /*
+ * AirQ 100
+ *
+ */
+
+class AIRQ100DataMessage : public DataMessage {
+friend class sNET;
+
+protected:
+	AIRQ100DataMessage(__data_message &rawmessage) : DataMessage(rawmessage) {};
+	~AIRQ100DataMessage() {};
+	
+public:
+	uint8_t getDataLen() {return 3;};
+	uint8_t getTEMP();
+	int getBATT();
+};
+
+/*
+ * AirQ 101
+ *
+ */
+
+class AIRQ101DataMessage : public DataMessage {
+friend class sNET;
+
+protected:
+	AIRQ101DataMessage(__data_message &rawmessage) : DataMessage(rawmessage) {};
+	~AIRQ101DataMessage() {};
+	
+public:
+	uint8_t getDataLen() {return 6;};
+	float getTEMP();
+	int getBATT();
+};
+
+/*
  * AirQ 300
  *
  */
@@ -97,13 +133,17 @@ public:
 class AIRQ3XXDataMessage : public DataMessage {
 friend class sNET;
 
+private:
+	uint8_t risingStatus;
+
 protected:
 	AIRQ3XXDataMessage(__data_message &rawmessage) : DataMessage(rawmessage) {};
-	~AIRQ3XXDataMessage();
+	~AIRQ3XXDataMessage() {};
 	
 public:
 	uint8_t getDataLen() {return 1;};
 	bool getIOStatus(uint8_t mask);
+	bool risingIOStatus(uint8_t mask);
 };
 
 class AIRQ300DataMessage: public AIRQ3XXDataMessage {
