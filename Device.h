@@ -50,24 +50,12 @@ public:
 	DataMessage *getLastMessage();
 	uint8_t getLQI();
 	int8_t getRSSI();
-	virtual bool statusChanged() {return false;};
+	virtual bool statusChanged() {return status->updated();};
 };
 
 
-class AIRQ100: public AIRQBaseDevice {
-friend class sNET;
-
-protected:
-	AIRQ100(DataMessage *message) : AIRQBaseDevice(message) {};
-	~AIRQ100() {};
-
-public:
+#define AIRQ100 AIRQ101
 	
-	uint8_t getTEMP() {return ((AIRQ100DataMessage*)status)->getTEMP();}
-	float getBATT() {return ((AIRQ100DataMessage*)status)->getBATT();}	
-};
-
-
 class AIRQ101: public AIRQBaseDevice {
 friend class sNET;
 

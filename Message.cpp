@@ -91,26 +91,6 @@ bool DataMessage::updated() {
 
 
 /*
- * AirQ 100
- *
- */
-
-uint8_t AIRQ100DataMessage::getTEMP() {
-	uint8_t temp = 0;
-	
-	memcpy(&temp, getData(), sizeof(uint8_t));
-	return temp;
-}
-
-int AIRQ100DataMessage::getBATT() {
-	int battvoltage = 0;
-	
-	memcpy(&battvoltage, getData()+sizeof(uint8_t), 2);
-	return battvoltage;
-}
-
-
-/*
  * AirQ 101
  *
  */

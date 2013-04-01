@@ -82,23 +82,8 @@ public:
 	
 };
 
-/*
- * AirQ 100
- *
- */
 
-class AIRQ100DataMessage : public DataMessage {
-friend class sNET;
-
-protected:
-	AIRQ100DataMessage(__data_message &rawmessage) : DataMessage(rawmessage) {};
-	~AIRQ100DataMessage() {};
-	
-public:
-	uint8_t getDataLen() {return 3;};
-	uint8_t getTEMP();
-	int getBATT();
-};
+#define AIRQ100DataMessage AIRQ101DataMessage
 
 /*
  * AirQ 101
