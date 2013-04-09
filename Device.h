@@ -145,6 +145,11 @@ public:
 	void pulseRELAY2(bool check=true, uint8_t timeout=-1);
 	void pulseRELAY3(bool check=true, uint8_t timeout=-1);
 	void pulseRELAY4(bool check=true, uint8_t timeout=-1);
+	
+	bool risingIN1() {return ((AIRQ305DataMessage*)status)->risingIOStatus(AIRQ305_IN1_MASK);};
+	bool risingIN2() {return ((AIRQ305DataMessage*)status)->risingIOStatus(AIRQ305_IN2_MASK);};	
+	bool risingIN3() {return ((AIRQ305DataMessage*)status)->risingIOStatus(AIRQ305_IN3_MASK);};	
+	bool risingIN4() {return ((AIRQ305DataMessage*)status)->risingIOStatus(AIRQ305_IN4_MASK);};
 				
 	void setRELAY1(IO_STATUS status, bool check=true, uint8_t duration = 0, uint8_t timeout=-1);
 	void setRELAY2(IO_STATUS status, bool check=true, uint8_t duration = 0, uint8_t timeout=-1);

@@ -42,7 +42,7 @@
 #define SNET_DEFAULT_RX_PIN			10	 
 #define SNET_DEFAULT_TX_PIN			11
 	 
-#define SNET_LIBRARY_VERSION		0.51
+#define SNET_LIBRARY_VERSION		0.52
  
 class sNET  {
 public:
