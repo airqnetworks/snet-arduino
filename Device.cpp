@@ -27,6 +27,8 @@
 #include "sNET.h"
 #include "Device.h"
 
+extern _sNET sNET;
+
 AIRQBaseDevice::AIRQBaseDevice(DataMessage *message) {
 	status = message;
 } 
@@ -66,99 +68,55 @@ AIRQControlBoard::AIRQControlBoard(DataMessage *message) :
 
 void AIRQControlBoard::sendSetMessage(uint8_t subtype, uint8_t *data, uint8_t len, bool confirm) {
 	uint8_t *addr = getDeviceID();
-	if(confirm)
-		snet->sendToDevice(addr[0], addr[1], addr[2], addr[3], 0x42, subtype, data, len);
-	else
-		snet->sendToDevice(addr[0], addr[1], addr[2], addr[3], 0x2, subtype, data, len);
-}
-
-#ifdef SNET_ENABLE_CONFIRM
-
-void AIRQControlBoard::setIO(uint8_t subtype, uint8_t *data, uint8_t len, bool check, uint8_t timeout) {
-	if(!check) {
-		sendSetMessage(subtype, data, len);
-		delay(250);
-		return;
-	}
-	uint8_t newdata[len+1];
-	uint8_t conftoken = (uint8_t)random(1, 255);
-
-	while(conftoken == lconftoken) /* Because random is a relative word :-) */
-		conftoken = (uint8_t)random(1, 255);
-	lconftoken = conftoken;
-	
-	memcpy(newdata, data, len);
-	newdata[len] = conftoken;
-		
-	sendSetMessage(subtype, newdata, len+1, true);
-
-	if(check) {
-		uint8_t times = 0;
-		uint8_t type;
-		while(1) {
-			snet->processMessages();
-
-			if(status->updated()){
-				type = status->getType();
-				if ((type & MSG_TYPE_CONFIRMED) == MSG_TYPE_CONFIRMED && status->getData()[0] == conftoken) 
+	if(confirm) {
+		uint8_t conft = 0;
+		while(conft == lconftoken || conft == 0)
+			conft = random(1, 254);
+		lconftoken = conft;
+		uint8_t dly = 1;
+		while(true) {
+			if(++dly >= 10)
+				dly = 2;
+			sNET.sendToDevice(addr[0], addr[1], addr[2], addr[3], 0x42, subtype, conft, data, len);
+#ifndef SNET_USE_INTERRUPTS
+			sNET.processMessages(true);
+#endif
+			delay(1000*dly);
+			if(status->updated()) {
+				if (status->getConfToken() == conft) {
 					return;
-				else {
-					sendSetMessage(subtype, newdata, len+1, true);
-					times++;
-				} 
+				}
 			}
-
-			if(timeout >= 0 and (times >= timeout))
-				return;
 		}
 	}
+	else
+		sNET.sendToDevice(addr[0], addr[1], addr[2], addr[3], 0x2, subtype, 0, data, len);
 }
 
-#else
 
-void AIRQControlBoard::setIO(uint8_t subtype, uint8_t *data, uint8_t len, bool check, uint8_t timeout) {
-	sendSetMessage(subtype, data, len);
-	delay(1000);
+void AIRQControlBoard::setIO(uint8_t subtype, uint8_t *data, uint8_t len) {
+	sendSetMessage(subtype, data, len, true);
 }
 
-#endif
 
-
-void AIRQControlBoard::setRELAY(uint8_t rmask, IO_STATUS rstatus, bool check, uint8_t duration, uint8_t timeout) {
+void AIRQControlBoard::setRELAY(uint8_t rmask, IO_STATUS rstatus, uint8_t duration) {
 	if(duration > 0) {
 		uint8_t data[] = {rmask, duration};
-		setIO(0x2, data, 2, check);
+		setIO(0x2, data, 2);
 		return;
 	}
 
-	while((status->getType() & MSG_TYPE_CONFIRMED) == MSG_TYPE_CONFIRMED)
-		snet->processMessages();
-	
 	uint8_t data = status->getData()[0] & RELAY_XOR_MASK;
 	
 	if(rstatus)
 		data |= rmask;
 	else
 		data &= 0xFF ^rmask;
-	
-#ifdef SNET_ENABLE_CONFIRM 
-    /* 
-       We check if really need to change relay status. This
-       check is reliable if and only if SNET_ENABLE_CONFIRM 
-       if defined 
-     */
+
 	if(data == (status->getData()[0] & RELAY_XOR_MASK))
 		return;
-#endif
 
-#ifdef SNET_ENABLE_CONFIRM	
-	setIO(0x1, &data, 1, check, timeout);
-#else
-	setIO(0x1, &data, 1, false, -1);
-#endif //SNET_ENABLE_CONFIRM
-	
-	while((status->getType() & MSG_TYPE_CONFIRMED) == MSG_TYPE_CONFIRMED)
-		snet->processMessages();
+	setIO(0x1, &data, 1);
 }
 
 
@@ -180,12 +138,12 @@ AIRQ300::AIRQ300(DataMessage *message) :
 	 RELAY_XOR_MASK = 0x30;
 }
 
-void AIRQ300::setRELAY1(IO_STATUS rstatus, bool check, uint8_t timeout) {
-	setRELAY(AIRQ300_RELAY1_MASK, rstatus, check, 0, timeout);
+void AIRQ300::setRELAY1(IO_STATUS rstatus) {
+	setRELAY(AIRQ300_RELAY1_MASK, rstatus, 0);
 }
 
-void AIRQ300::setRELAY2(IO_STATUS rstatus, bool check, uint8_t timeout) {
-	setRELAY(AIRQ300_RELAY2_MASK, rstatus, check, 0, timeout);
+void AIRQ300::setRELAY2(IO_STATUS rstatus) {
+	setRELAY(AIRQ300_RELAY2_MASK, rstatus, 0);
 }
 
 /*
@@ -197,36 +155,36 @@ AIRQ305::AIRQ305(DataMessage *message) :
 	 RELAY_XOR_MASK = 0xF;
 }
 
-void AIRQ305::pulseRELAY1(bool check, uint8_t timeout) {
-	setRELAY(AIRQ305_PULSE_RELAY1_MASK, ON, check, 0, timeout);
+void AIRQ305::pulseRELAY1() {
+	setRELAY(AIRQ305_PULSE_RELAY1_MASK, ON, 0);
 }
 
-void AIRQ305::pulseRELAY2(bool check, uint8_t timeout) {
-	setRELAY(AIRQ305_PULSE_RELAY2_MASK, ON, check, 0, timeout);
+void AIRQ305::pulseRELAY2() {
+	setRELAY(AIRQ305_PULSE_RELAY2_MASK, ON, 0);
 }
 
-void AIRQ305::pulseRELAY3(bool check, uint8_t timeout) {
-	setRELAY(AIRQ305_PULSE_RELAY3_MASK, ON, check, 0, timeout);
+void AIRQ305::pulseRELAY3() {
+	setRELAY(AIRQ305_PULSE_RELAY3_MASK, ON, 0);
 }
 
-void AIRQ305::pulseRELAY4(bool check, uint8_t timeout) {
-	setRELAY(AIRQ305_PULSE_RELAY4_MASK, ON, check, 0, timeout);
+void AIRQ305::pulseRELAY4() {
+	setRELAY(AIRQ305_PULSE_RELAY4_MASK, ON, 0);
 }
 
-void AIRQ305::setRELAY1(IO_STATUS rstatus, bool check, uint8_t duration, uint8_t timeout) {
-	setRELAY(AIRQ305_RELAY1_MASK, rstatus, check, duration, timeout);
+void AIRQ305::setRELAY1(IO_STATUS rstatus, uint8_t duration) {
+	setRELAY(AIRQ305_RELAY1_MASK, rstatus, duration);
 }
 
-void AIRQ305::setRELAY2(IO_STATUS rstatus, bool check, uint8_t duration, uint8_t timeout) {
-	setRELAY(AIRQ305_RELAY2_MASK, rstatus, check, duration, timeout);
+void AIRQ305::setRELAY2(IO_STATUS rstatus, uint8_t duration) {
+	setRELAY(AIRQ305_RELAY2_MASK, rstatus, duration);
 }
 
-void AIRQ305::setRELAY3(IO_STATUS rstatus, bool check, uint8_t duration, uint8_t timeout) {
-	setRELAY(AIRQ305_RELAY3_MASK, rstatus, check, duration, timeout);
+void AIRQ305::setRELAY3(IO_STATUS rstatus, uint8_t duration) {
+	setRELAY(AIRQ305_RELAY3_MASK, rstatus, duration);
 }
 
-void AIRQ305::setRELAY4(IO_STATUS rstatus, bool check, uint8_t duration, uint8_t timeout) {
-	setRELAY(AIRQ305_RELAY4_MASK, rstatus, check, duration, timeout);
+void AIRQ305::setRELAY4(IO_STATUS rstatus, uint8_t duration) {
+	setRELAY(AIRQ305_RELAY4_MASK, rstatus, duration);
 }
 
 /*
@@ -239,54 +197,54 @@ AIRQ310::AIRQ310(DataMessage *message) :
 }
 
 
-void AIRQ310::pulseRELAY1(bool check, uint8_t timeout) {
-	setRELAY(AIRQ310_PULSE_RELAY1_MASK, ON, check, 0, timeout);
+void AIRQ310::pulseRELAY1() {
+	setRELAY(AIRQ310_PULSE_RELAY1_MASK, ON, 0);
 }
 
-void AIRQ310::pulseRELAY2(bool check, uint8_t timeout) {
-	setRELAY(AIRQ310_PULSE_RELAY2_MASK, ON, check, 0, timeout);
+void AIRQ310::pulseRELAY2() {
+	setRELAY(AIRQ310_PULSE_RELAY2_MASK, ON, 0);
 }
 
-void AIRQ310::pulseRELAY3(bool check, uint8_t timeout) {
-	setRELAY(AIRQ310_PULSE_RELAY3_MASK, ON, check, 0, timeout);
+void AIRQ310::pulseRELAY3() {
+	setRELAY(AIRQ310_PULSE_RELAY3_MASK, ON, 0);
 }
 
-void AIRQ310::pulseRELAY4(bool check, uint8_t timeout) {
-	setRELAY(AIRQ310_PULSE_RELAY4_MASK, ON, check, 0, timeout);
+void AIRQ310::pulseRELAY4() {
+	setRELAY(AIRQ310_PULSE_RELAY4_MASK, ON, 0);
 }
 
-void AIRQ310::pulseRELAY5(bool check, uint8_t timeout) {
-	setRELAY(AIRQ310_PULSE_RELAY5_MASK, ON, check, 0, timeout);
+void AIRQ310::pulseRELAY5() {
+	setRELAY(AIRQ310_PULSE_RELAY5_MASK, ON, 0);
 }
 
-void AIRQ310::pulseRELAY6(bool check, uint8_t timeout) {
-	setRELAY(AIRQ310_PULSE_RELAY6_MASK, ON, check, 0, timeout);
+void AIRQ310::pulseRELAY6() {
+	setRELAY(AIRQ310_PULSE_RELAY6_MASK, ON, 0);
 }
 
-void AIRQ310::setRELAY1(IO_STATUS rstatus, bool check, uint8_t timeout) {
-	setRELAY(AIRQ310_RELAY1_MASK, rstatus, check, 0, timeout);
+void AIRQ310::setRELAY1(IO_STATUS rstatus) {
+	setRELAY(AIRQ310_RELAY1_MASK, rstatus, 0);
 }
 
-void AIRQ310::setRELAY2(IO_STATUS rstatus, bool check, uint8_t timeout) {
-	setRELAY(AIRQ310_RELAY2_MASK, rstatus, check, 0, timeout);
-}
-
-
-void AIRQ310::setRELAY3(IO_STATUS rstatus, bool check, uint8_t timeout) {
-	setRELAY(AIRQ310_RELAY3_MASK, rstatus, check, 0, timeout);
+void AIRQ310::setRELAY2(IO_STATUS rstatus) {
+	setRELAY(AIRQ310_RELAY2_MASK, rstatus, 0);
 }
 
 
-void AIRQ310::setRELAY4(IO_STATUS rstatus, bool check, uint8_t timeout) {
-	setRELAY(AIRQ310_RELAY4_MASK, rstatus, check, 0, timeout);
+void AIRQ310::setRELAY3(IO_STATUS rstatus) {
+	setRELAY(AIRQ310_RELAY3_MASK, rstatus, 0);
 }
 
 
-void AIRQ310::setRELAY5(IO_STATUS rstatus, bool check, uint8_t timeout) {
-	setRELAY(AIRQ310_RELAY5_MASK, rstatus, check, 0, timeout);
+void AIRQ310::setRELAY4(IO_STATUS rstatus) {
+	setRELAY(AIRQ310_RELAY4_MASK, rstatus, 0);
 }
 
 
-void AIRQ310::setRELAY6(IO_STATUS rstatus, bool check, uint8_t timeout) {
-	setRELAY(AIRQ310_RELAY6_MASK, rstatus, check, 0, timeout);
+void AIRQ310::setRELAY5(IO_STATUS rstatus) {
+	setRELAY(AIRQ310_RELAY5_MASK, rstatus, 0);
+}
+
+
+void AIRQ310::setRELAY6(IO_STATUS rstatus) {
+	setRELAY(AIRQ310_RELAY6_MASK, rstatus, 0);
 }

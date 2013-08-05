@@ -31,18 +31,18 @@
 #include "Message.h"
 
 class DataMessage;
-class sNET;
+// class _sNET;
 
 class AIRQBaseDevice {
-friend class sNET;
+friend class _sNET;
 
 protected:
 	DataMessage *status;
-	sNET *snet;
+	// _sNET *snet;
 	
 	AIRQBaseDevice(DataMessage *message);
 	~AIRQBaseDevice();
-	void setSNETReference(sNET *snetptr) {snet = snetptr;};
+	// void setSNETReference(_sNET *snetptr) {snet = snetptr;};
 	void updateFromRawMessage(__data_message *message);
 	
 public:
@@ -57,7 +57,7 @@ public:
 #define AIRQ100 AIRQ101
 	
 class AIRQ101: public AIRQBaseDevice {
-friend class sNET;
+friend class _sNET;
 
 protected:
 	AIRQ101(DataMessage *message) : AIRQBaseDevice(message) {};
@@ -76,7 +76,7 @@ typedef enum {
 } IO_STATUS;
 
 class AIRQControlBoard: public AIRQBaseDevice {
-friend class sNET;
+friend class _sNET;
 
 private:
 	uint8_t lstatus;
@@ -89,9 +89,9 @@ protected:
 
 public:
 	virtual bool statusChanged();
-	void sendSetMessage(uint8_t subtype, uint8_t *data, uint8_t len, bool confirm=false);
-	void setRELAY(uint8_t rmask, IO_STATUS rstatus, bool check, uint8_t duration, uint8_t timeout);
-	void setIO(uint8_t subtype, uint8_t *data, uint8_t len, bool check=true, uint8_t timeout=-1);
+	void sendSetMessage(uint8_t subtype, uint8_t *data, uint8_t len, bool confirm=true);
+	void setRELAY(uint8_t rmask, IO_STATUS rstatus, uint8_t duration);
+	void setIO(uint8_t subtype, uint8_t *data, uint8_t len);
 };
 
 
@@ -100,7 +100,7 @@ public:
  *
  */
 class AIRQ300 : public AIRQControlBoard {
-friend class sNET;
+friend class _sNET;
 	
 protected:
 	AIRQ300(DataMessage *message);
@@ -115,8 +115,8 @@ public:
 	IO_STATUS getRELAY1() {return (IO_STATUS)((AIRQ300DataMessage*)status)->getRELAY1();};
 	IO_STATUS getRELAY2() {return (IO_STATUS)((AIRQ300DataMessage*)status)->getRELAY2();};
 	
-	void setRELAY1(IO_STATUS status, bool check=true, uint8_t timeout=-1);
-	void setRELAY2(IO_STATUS status, bool check=true, uint8_t timeout=-1);
+	void setRELAY1(IO_STATUS status);
+	void setRELAY2(IO_STATUS status);
 
 };
    
@@ -125,7 +125,7 @@ public:
  *
  */
 class AIRQ305 : public AIRQControlBoard {
-friend class sNET;
+friend class _sNET;
 	
 protected:
 	AIRQ305(DataMessage *message);
@@ -141,20 +141,20 @@ public:
 	IO_STATUS getRELAY3() {return (IO_STATUS)((AIRQ305DataMessage*)status)->getRELAY3();};
 	IO_STATUS getRELAY4() {return (IO_STATUS)((AIRQ305DataMessage*)status)->getRELAY4();};
 	
-	void pulseRELAY1(bool check=true, uint8_t timeout=-1);
-	void pulseRELAY2(bool check=true, uint8_t timeout=-1);
-	void pulseRELAY3(bool check=true, uint8_t timeout=-1);
-	void pulseRELAY4(bool check=true, uint8_t timeout=-1);
+	void pulseRELAY1();
+	void pulseRELAY2();
+	void pulseRELAY3();
+	void pulseRELAY4();
 	
 	bool risingIN1() {return ((AIRQ305DataMessage*)status)->risingIOStatus(AIRQ305_IN1_MASK);};
 	bool risingIN2() {return ((AIRQ305DataMessage*)status)->risingIOStatus(AIRQ305_IN2_MASK);};	
 	bool risingIN3() {return ((AIRQ305DataMessage*)status)->risingIOStatus(AIRQ305_IN3_MASK);};	
 	bool risingIN4() {return ((AIRQ305DataMessage*)status)->risingIOStatus(AIRQ305_IN4_MASK);};
 				
-	void setRELAY1(IO_STATUS status, bool check=true, uint8_t duration = 0, uint8_t timeout=-1);
-	void setRELAY2(IO_STATUS status, bool check=true, uint8_t duration = 0, uint8_t timeout=-1);
-	void setRELAY3(IO_STATUS status, bool check=true, uint8_t duration = 0, uint8_t timeout=-1);
-	void setRELAY4(IO_STATUS status, bool check=true, uint8_t duration = 0, uint8_t timeout=-1);
+	void setRELAY1(IO_STATUS status, uint8_t duration = 0);
+	void setRELAY2(IO_STATUS status, uint8_t duration = 0);
+	void setRELAY3(IO_STATUS status, uint8_t duration = 0);
+	void setRELAY4(IO_STATUS status, uint8_t duration = 0);
 };
    
 /*
@@ -162,7 +162,7 @@ public:
  *
  */
 class AIRQ310 : public AIRQControlBoard {
-friend class sNET;
+friend class _sNET;
 
 protected:
 	AIRQ310(DataMessage *message);
@@ -177,19 +177,19 @@ public:
 	IO_STATUS getRELAY5() {return (IO_STATUS)((AIRQ310DataMessage*)status)->getRELAY5();};				
 	IO_STATUS getRELAY6() {return (IO_STATUS)((AIRQ310DataMessage*)status)->getRELAY6();};		
 
-	void pulseRELAY1(bool check=true, uint8_t timeout=-1);
-	void pulseRELAY2(bool check=true, uint8_t timeout=-1);
-	void pulseRELAY3(bool check=true, uint8_t timeout=-1);
-	void pulseRELAY4(bool check=true, uint8_t timeout=-1);
-	void pulseRELAY5(bool check=true, uint8_t timeout=-1);
-	void pulseRELAY6(bool check=true, uint8_t timeout=-1);
+	void pulseRELAY1();
+	void pulseRELAY2();
+	void pulseRELAY3();
+	void pulseRELAY4();
+	void pulseRELAY5();
+	void pulseRELAY6();
 
-	void setRELAY1(IO_STATUS status, bool check=true, uint8_t timeout=-1);
-	void setRELAY2(IO_STATUS status, bool check=true, uint8_t timeout=-1);
-	void setRELAY3(IO_STATUS status, bool check=true, uint8_t timeout=-1);
-	void setRELAY4(IO_STATUS status, bool check=true, uint8_t timeout=-1);
-	void setRELAY5(IO_STATUS status, bool check=true, uint8_t timeout=-1);
-	void setRELAY6(IO_STATUS status, bool check=true, uint8_t timeout=-1);			
+	void setRELAY1(IO_STATUS status);
+	void setRELAY2(IO_STATUS status);
+	void setRELAY3(IO_STATUS status);
+	void setRELAY4(IO_STATUS status);
+	void setRELAY5(IO_STATUS status);
+	void setRELAY6(IO_STATUS status);			
 };
 
 #endif //__DEVICE_H

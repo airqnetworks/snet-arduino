@@ -27,42 +27,47 @@
 #ifndef __SNET_H
 #define __SNET_H
 
-#define SNET_ENABLE_CONFIRM
+#define SNET_USE_INTERRUPTS
 
 #include <Arduino.h>
-#include <SoftwareSerial.h>
 	 
 #include "Message.h"
 #include "Device.h"
 	  
-#define SNET_SERIAL_BAUDRATE 		19200
-#define SNET_MAX_DATAMESSAGE_SIZE   30
-#define SNET_MAX_SETMESSAGE_SIZE    30	 
+#define SNET_MAX_MESSAGE_SIZE   	31
 #define SNET_DEV_ADDR_LEN		 	4
-#define SNET_DEFAULT_RX_PIN			10	 
-#define SNET_DEFAULT_TX_PIN			11
-	 
-#define SNET_LIBRARY_VERSION		0.52
- 
-class sNET  {
-public:
-	 sNET(uint8_t numDevices, uint8_t rxPin=SNET_DEFAULT_RX_PIN, uint8_t txPin=SNET_DEFAULT_TX_PIN);
-     ~sNET();
 
-	 void begin();
-     void processMessages();
+#define SNET_DEFAULT_DRDY_PIN		2	 
+#define SNET_DEFAULT_SSN_PIN		9
+	 
+#define SNET_LIBRARY_VERSION		2.0
+ 
+class _sNET  {
+public:
+	 _sNET();
+     ~_sNET();
+
+     void _processMessages();
+	 
+	 void begin(uint8_t numDevices, uint8_t ssn=SNET_DEFAULT_SSN_PIN);
+     void processMessages(bool wait=false);
 	 AIRQBaseDevice *getDeviceForDeviceID(uint8_t octet1, uint8_t octet2, uint8_t octet3, uint8_t octet4);
 	 DataMessage *getMessageForDeviceID(uint8_t octet1, uint8_t octet2, uint8_t octet3, uint8_t octet4);
 	 void sendBroadcast(uint8_t *data, uint8_t len);
-	 void sendToDevice(uint8_t octet1, uint8_t octet2, uint8_t octet3, uint8_t octet4, uint8_t type, uint8_t subtype, uint8_t *data, uint8_t len);
+	 void sendToDevice(uint8_t octet1, uint8_t octet2, uint8_t octet3, uint8_t octet4, uint8_t type, uint8_t subtype, uint8_t conft, uint8_t *data, uint8_t len);
+	 void reset();
 	 			 
 private:
-	 SoftwareSerial serial;
+	 uint8_t SPIRead(__data_message *message);
+	 void SPIWrite(uint8_t *message, uint8_t len);
+	 
+	 uint8_t giunse;
 	 uint8_t allocatedDevices;
      uint8_t numDevices;
+	 uint8_t SSN;
 	 AIRQBaseDevice **devices;
-	 
-	 uint8_t readSNETMessage(SoftwareSerial *serial, __data_message *msg);
  };
+
+extern _sNET sNET;
 
 #endif //__SNET_H

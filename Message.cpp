@@ -28,6 +28,8 @@
 #include "Message.h"
 #include "sNET.h"
 
+extern _sNET sNET;
+
 bool CHECK_MASK(uint8_t data, uint8_t mask) {
 	return (data & mask) == mask;
 }
@@ -116,16 +118,10 @@ int AIRQ101DataMessage::getBATT() {
  */
 
 bool AIRQ3XXDataMessage::getIOStatus(uint8_t mask) {
-	while((getType() & MSG_TYPE_CONFIRMED) == MSG_TYPE_CONFIRMED)
-		snet->processMessages();
-
 	return CHECK_MASK(getData()[0], mask);
 }
 
 bool AIRQ3XXDataMessage::risingIOStatus(uint8_t mask) {
-	while((getType() & MSG_TYPE_CONFIRMED) == MSG_TYPE_CONFIRMED)
-		snet->processMessages();
-
 	bool inval = CHECK_MASK(getData()[0], mask);
 	
 	// return true for rising, else false

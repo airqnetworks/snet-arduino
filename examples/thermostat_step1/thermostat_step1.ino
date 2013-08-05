@@ -24,9 +24,8 @@
  *
  */
 
-#include <SoftwareSerial.h>
 #include <sNET.h>
-
+#include <SPI.h>
 // This variabile sets the desired ambient temperature */
 float desiredTemperature = 21.5;
 
@@ -35,14 +34,13 @@ int sensorPin = 0;   //the analog pin the TMP36's Vout (sense) pin is connected 
 //the resolution is 10 mV / degree centigrade with a
 //500 mV offset to allow for negative temperatures
 
-sNET snet(1);
 AIRQ305 *board;
 
 void setup()
 {
   Serial.begin(19200);  //Start the serial connection with the computer
   //to view the result open the serial monitor
-  snet.begin();
+  sNET.begin(1);
   analogReference(EXTERNAL);
   pinMode(4, OUTPUT);
 }
@@ -60,12 +58,6 @@ float getTemperature() {
 
 void loop()
 {
-  /* sNET::processMessages() is responsibile to process messages coming from 
-     AirQ Networks devices and to update corresponding device object (in this
-     example, the AIRQ305 object). User code should call this method as soon
-     as possible and continuosly */
-  snet.processMessages();
-
   float tempC = getTemperature();
   // Let's give some feedback to the console
   Serial.print(tempC); Serial.println(" degrees C");
@@ -74,7 +66,7 @@ void loop()
   float tempF = tempC * (9.0 / 5.0) + 32.0;
   Serial.print(tempF); Serial.println(" degrees F");
 
-  if((board = (AIRQ305*)snet.getDeviceForDeviceID(5,0,1,3)) != 0) {
+  if((board = (AIRQ305*)sNET.getDeviceForDeviceID(5,0,1,3)) != 0) {
     if(tempC > desiredTemperature + 0.5) /* Temperature raised too much: turn off bolier */
       board->setRELAY1(OFF);
     else if(tempC < desiredTemperature - 0.5) /* Temperature decreased too much: turn on bolier */

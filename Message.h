@@ -27,6 +27,7 @@
 #ifndef __MESSAGE_H
 #define __MESSAGE_H
 
+#include <SPI.h>
 #include <Arduino.h>
 
 #define MSG_TYPE_CONFIRM 	0x40
@@ -41,16 +42,15 @@ typedef struct {
 	 uint8_t subtype;
 	 uint8_t pkt;
 	 uint8_t fwd;	 
+	 uint8_t conft;	 	 
 	 int8_t  RSSI;
 	 uint8_t LQI;
 	 uint8_t data[MSG_MAX_DATA_LEN];
 	 uint8_t datalen;
  } __data_message;
  
-class sNET;
-
-class DataMessage {
-	friend class sNET;
+ class DataMessage {
+	friend class _sNET;
 	friend class AIRQBaseDevice;
 	
 private:
@@ -58,15 +58,13 @@ private:
 	bool umessage;	
 
 protected:
-	sNET *snet;
-
 	DataMessage();
 	DataMessage(__data_message &rawmessage);
 	~DataMessage() {};
-	void setSNETReference(sNET *snetptr) {snet = snetptr;};
 	void updateFromRawMessage(__data_message *message);
 	
 public:
+	uint8_t getConfToken() {return rawmessage.conft;};
 	uint8_t *getDeviceID();
 	uint8_t getForward() {return rawmessage.fwd;};
 	uint8_t *getReceiverID();
@@ -91,7 +89,7 @@ public:
  */
 
 class AIRQ101DataMessage : public DataMessage {
-friend class sNET;
+friend class _sNET;
 
 protected:
 	AIRQ101DataMessage(__data_message &rawmessage) : DataMessage(rawmessage) {};
@@ -116,7 +114,7 @@ public:
 #define AIRQ300_POWER_MASK  0x40
 
 class AIRQ3XXDataMessage : public DataMessage {
-friend class sNET;
+friend class _sNET;
 
 private:
 	uint8_t risingStatus;
@@ -132,7 +130,7 @@ public:
 };
 
 class AIRQ300DataMessage: public AIRQ3XXDataMessage {
-friend class sNET;
+friend class _sNET;
 
 protected:
 	AIRQ300DataMessage(__data_message &rawmessage) : AIRQ3XXDataMessage(rawmessage) {};
@@ -166,7 +164,7 @@ public:
 #define AIRQ305_IN4_MASK    0x80
 
 class AIRQ305DataMessage: public AIRQ3XXDataMessage {
-friend class sNET;
+friend class _sNET;
 
 protected:
 	AIRQ305DataMessage(__data_message &rawmessage) : AIRQ3XXDataMessage(rawmessage) {};
@@ -204,7 +202,7 @@ public:
 #define AIRQ310_POWER_MASK  0x40
 
 class AIRQ310DataMessage: public AIRQ3XXDataMessage {
-friend class sNET;
+friend class _sNET;
 
 protected:
 	AIRQ310DataMessage(__data_message &rawmessage) : AIRQ3XXDataMessage(rawmessage) {};

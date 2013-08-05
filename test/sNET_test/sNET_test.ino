@@ -24,16 +24,16 @@
  *
  */
 
-/* To use sNET library we have to include sNET.h in our sketch */
-#include <sNET.h>
-/* sNET lib uses SoftwareSerial library. 
+/* To use _sNET library we have to include _sNET.h in our sketch */
+#include <_sNET.h>
+/* _sNET lib uses SoftwareSerial library. 
    Arduino IDE requires that we include the header file here */
 #include <SoftwareSerial.h>
 
-/* The following line creates a sNET object. This object will be used
+/* The following line creates a _sNET object. This object will be used
    interact with other device. The integer parameter say to the library
    how many end devices we'll interface */
-sNET snet(3);
+_sNET snet(3);
 
 void setup() {
   snet.begin();
@@ -44,11 +44,11 @@ void loop() {
 
   snet.processMessages();
 
-  /* We ask the sNET object to give us the reference the device object
-   * corresponding to 4.0.1.2 board. The method sNET::getDeviceForDeviceID()
+  /* We ask the _sNET object to give us the reference the device object
+   * corresponding to 4.0.1.2 board. The method _sNET::getDeviceForDeviceID()
    * will return a pointer to an AIR310 object if the object was already created, 
    * otherwise it returns 0 (NULL). The device object is created as soon as 
-   * sNET library captures a message coming from that device */   
+   * _sNET library captures a message coming from that device */   
   if((board = (AIRQ310 *)snet.getDeviceForDeviceID(4,0,1,2)) != 0) {
      /* Ok, the AIRQ310 object was created and we can turn RELAY1 on */
      board->setRELAY1(ON);

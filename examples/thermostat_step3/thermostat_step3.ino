@@ -24,12 +24,12 @@
  *
  */
 
-#include <SoftwareSerial.h>
 #include <sNET.h>
 #include <LiquidCrystal.h>
-#include <SPI.h>
 #include <Ethernet.h>
 #include <Flash.h>
+#include <SPI.h>
+#include <SD.h>
 #include <TinyWebServer.h>
 
 float setTemp = 18.0; // This variabile sets the desired ambient temperature
@@ -40,7 +40,6 @@ uint8_t downBTN = 7;
 
 LiquidCrystal lcd(5, 4, 3, 2, 1, 0);
 
-sNET snet(2, 8, 9);
 AIRQ305 *board;
 AIRQ100 *sensor;
 
@@ -141,7 +140,7 @@ void setup()
   // start the Ethernet connection and the server:
   Ethernet.begin(mac, ip);
   web.begin();
-  snet.begin();
+  sNET.begin(2);
   
   lcd.begin(16, 2);
   sprintf(line2, "%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
@@ -151,13 +150,11 @@ void setup()
   /* We wait until both AIRQ 305 and AIRQ 100 are detected */  
   lcdUpdate("Waiting R1...", "Waiting sensor...");
   
-  while((board = (AIRQ305*)snet.getDeviceForDeviceID(5,0,1,3)) == 0)    
-    snet.processMessages();
+  while((board = (AIRQ305*)sNET.getDeviceForDeviceID(5,0,1,3)) == 0);
   
   lcdUpdate("Connected!", "Waiting sensor...");
   
-  while((sensor = (AIRQ100*)snet.getDeviceForDeviceID(101,2,1,0)) == 0)    
-    snet.processMessages();
+  while((sensor = (AIRQ100*)sNET.getDeviceForDeviceID(101,2,1,0)) == 0);
   
   lcdUpdate("Connected!", "Connected!");
 
@@ -165,11 +162,6 @@ void setup()
 
 void loop()
 {
-/* sNET::processMessages() is responsibile to process messages coming from 
-   AirQ Networks devices and to update corresponding device object (in this
-   example, the AIRQ305 and AIRQ100 objects). User code should call this 
-   method as soon as possible and continuosly */
-  snet.processMessages();
   delay(150);  //A little bit of debouncing
   web.process();
 
