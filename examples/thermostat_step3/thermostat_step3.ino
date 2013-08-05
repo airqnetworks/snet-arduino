@@ -38,7 +38,7 @@ char line1[16], line2[16];
 uint8_t upBTN = 6;
 uint8_t downBTN = 7;
 
-LiquidCrystal lcd(5, 4, 3, 2, 1, 0);
+LiquidCrystal lcd(5, 4, 3, 6, 1, 0);
 
 AIRQ305 *board;
 AIRQ100 *sensor;
