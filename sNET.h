@@ -56,12 +56,10 @@ public:
 	 void sendBroadcast(uint8_t *data, uint8_t len);
 	 void sendToDevice(uint8_t octet1, uint8_t octet2, uint8_t octet3, uint8_t octet4, uint8_t type, uint8_t subtype, uint8_t conft, uint8_t *data, uint8_t len);
 	 void reset();
-	 			 
-private:
+
 	 uint8_t SPIRead(__data_message *message);
-	 void SPIWrite(uint8_t *message, uint8_t len);
-	 
-	 uint8_t giunse;
+	 void SPIWrite(uint8_t *message, uint8_t len);	 			 
+private:
 	 uint8_t allocatedDevices;
      uint8_t numDevices;
 	 uint8_t SSN;

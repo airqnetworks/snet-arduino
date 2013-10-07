@@ -104,7 +104,6 @@ void _sNET::begin(uint8_t numdevices, uint8_t ssn) {
 	__data_message nullmsg;
 	numDevices = numdevices;
 	
-	giunse = true;
 	SPI.begin();
 	SPI.setDataMode(SPI_MODE0); 
     SPI.setClockDivider(SPI_CLOCK_DIV8);
@@ -145,7 +144,7 @@ void _sNET::_processMessages() {
 	__data_message message;
 	bool found = false;
 
-	if ((giunse = SPIRead(&message)) > 0) {
+	if (SPIRead(&message) > 0) {
 		for(uint8_t i = 0; i < allocatedDevices; i++) {
 			if(memcmp(devices[i]->getDeviceID(), message.devid, SNET_DEV_ADDR_LEN) == 0){
 				devices[i]->updateFromRawMessage(&message);
