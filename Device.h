@@ -66,7 +66,7 @@ protected:
 public:
 	
 	float getTEMP() {return ((AIRQ101DataMessage*)status)->getTEMP();}
-	float getBATT() {return ((AIRQ101DataMessage*)status)->getBATT();}	
+	int getBATT() {return ((AIRQ101DataMessage*)status)->getBATT();}	
 };
 
 
