@@ -3,7 +3,7 @@ sNET library for Arduino platform - &copy;AirQ Networks s.r.l. 2013
 # About
 With the AirQ ShielD, this library allows an Arduino board to interact with AirQ Networks devices (wireless sensors and control boards). Thanks to this library, there is no need to know the underlying sNET protocol (sNET is the protocol used by AirQ Networks devices to exchange messages and it's described on the AirQ Networks technical wiki -- http://wiki.airqnetworks.com/index.php/SNET_Protocol).
 
-Arduino communicates with the shield using SoftwareSerial library. This means that AirQ ShielD interacts with arduino through an UART interface. Digital pins **10** and **11** of the Uno board are used. However, library can be set up to use different pins if needed.
+Arduino communicates with the shield using SPI interface. Digital pins **9** and **2** of the Uno board are used for SSN and interrupt. However, library can be set up to use different pins if needed.
 
 #Installation
 sNET library need to be installed before using it. First step is downloading the library from AirQ Networks github repository (http://github.com/airqnetworks). Next, open your Arduino sketchbook folder. If there is already a folder there called *libraries*, place the library folder in there. If not, create a folder called *libraries* in the sketchbook folder, and drop the library folder in there. Then re-start the Arduino IDE, and you should see your new library in the Sketch > Import Library menu.
@@ -41,9 +41,9 @@ sNET library was designed to minimize usage of both Arduino SRAM and flash memor
 The <code>sNET</code> class does the dirty job. Instances of this class are responsible to:
 
 + Generate instances of corresponding *device objects* for each detected wireless device;
-+ Process messages generated on the UART and update the corresponding device object.
++ Process messages generated on the SPI interface and update the corresponding device object.
 
-Moreover, since messages exchanged between devices are completely asynchronous, messages generated on the shield UART are asynchronous too. Programmers have to ensure that these messages aren't lost allowing the sNET library to process them on the UART. This job is done by the <code>sNET::processMessages()</code> method and it should be called cyclically during the application lifecycle.
+Different from the previous release of the shield, the new AirQ ShielD 2.0 uses an interrupt driven approach to collect messages on the SPI interface. Programmers no long need to care about messages exchanged between AirQ ShielD and the end devices. This means, that the <code>sNET::processMessages()</code> method isn't available.
 
 #Usage
 
@@ -52,32 +52,21 @@ Let's suppose we want to interface the three AirQ 310 control boards of the abov
 ```cpp
 /* To use sNET library we have to include sNET.h in our sketch */
 #include <sNET.h>
-/* sNET lib uses SoftwareSerial library. Arduino IDE requires that we include the header file here */
-#include <SoftwareSerial.h> 
-sNET snet(3);
+/* sNET lib uses SPI library. Arduino IDE requires that we include the header file here */
+#include <SPI.h> 
 ```
 
-Next, we have to call the <code>sNET::begin()</code> method. This method does all the required stuff to proper configure the library. The <code>setup()</code> function inside the main sketch is the best place to call it.
+Next, we have to call the <code>sNET::begin()</code> method. This method does all the required stuff to proper configure the library. The <code>setup()</code> function inside the main sketch is the best place to call it. <code>sNET::begin()</code> accept an integer: this number says to the library how many devices (sensors, control boards, etc) we are going to interface
 ```cpp
 
 void setup() {
-  snet.begin();
-}
-```
-Next, as described in the previous paragraph, we have to cyclically call the <code>sNET::processMessages()</code> method, which is responsible to process messages generated on the shield UART and to crate the corresponding device objects. The <code>loop()</code> function inside the main sketch is the best place to call it.
-```cpp
-
-void loop() {
-  snet.processMessages();
-  ...
+  snet.begin(3);
 }
 ```
 Now, let's suppose that we want to turn on the RELAY1 of the second AirQ 310 board (the one with network address 4.0.1.2). sNET library allows to do this in a really simple way:
 ```cpp
 void loop() {
   AIRQ310 *board;
-
-  snet.processMessages();
 
   /* We ask the sNET object to give us the reference the device object
    * corresponding to 4.0.1.2 board. The method sNET::getDeviceForDeviceID()
